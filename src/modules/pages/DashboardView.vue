@@ -24,13 +24,13 @@
           </div>
         </div>
 
-        <button class="iconBtn" type="button" title="Search" @click="toast('Qidiruv: demo')">
+        <button class="iconBtn" type="button" title="Search" @click="notify('Qidiruv: demo', 'info')">
           <svg viewBox="0 0 24 24" fill="none"><path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.7"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
         </button>
-        <button class="iconBtn" type="button" title="Notifications" @click="toast('Bildirishnoma: demo')">
+        <button class="iconBtn" type="button" title="Notifications" @click="notify('Bildirishnoma: demo', 'info')">
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 22a2.3 2.3 0 0 0 2.2-2H9.8A2.3 2.3 0 0 0 12 22Z" fill="currentColor" opacity=".75"/><path d="M18 16H6c1.2-1.2 2-2.6 2-5.5a4 4 0 0 1 8 0c0 2.9.8 4.3 2 5.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
         </button>
-        <button class="avatar" type="button" title="Profile" @click="toast('Profil: demo')">
+        <button class="avatar" type="button" title="Profile" @click="notify('Profil: demo', 'info')">
           <span aria-hidden="true">{{ initials }}</span>
         </button>
       </div>
@@ -46,7 +46,7 @@
             <button class="ghostIcon" type="button" title="Share" @click="shareReport">
               <svg viewBox="0 0 24 24" fill="none"><path d="M16 8a3 3 0 1 0-2.8-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6 14a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm12-5a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" stroke="currentColor" stroke-width="1.6"/><path d="M8.4 15.1 15.6 11.9M8.4 18.9 15.6 14.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
             </button>
-            <button class="ghostIcon" type="button" title="More" @click="toast('More: demo')">
+            <button class="ghostIcon" type="button" title="More" @click="notify('More: demo', 'info')">
               <svg viewBox="0 0 24 24" fill="none"><path d="M6 12h.01M12 12h.01M18 12h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
             </button>
           </div>
@@ -68,17 +68,17 @@
         </div>
 
         <div class="miniGrid">
-          <button class="miniCard" type="button" @click="toast('Projects: demo')">
+          <button class="miniCard" type="button" @click="success('Projects: demo')">
             <div class="miniIco">◎</div>
             <div class="miniTitle">Project's</div>
             <div class="miniVal">{{ stats.projectsTotal }}</div>
           </button>
-          <button class="miniCard miniCardLight" type="button" @click="toast('In progress: demo')">
+          <button class="miniCard miniCardLight" type="button" @click="success('In progress: demo')">
             <div class="miniIco">↻</div>
             <div class="miniTitle">In Progess</div>
             <div class="miniVal">{{ stats.inProgress }}</div>
           </button>
-          <button class="miniCard" type="button" @click="toast('Completed: demo')">
+          <button class="miniCard" type="button" @click="success('Completed: demo')">
             <div class="miniIco">✓</div>
             <div class="miniTitle">Completed</div>
             <div class="miniVal">{{ stats.completed }}</div>
@@ -178,7 +178,7 @@
       <article class="card cardTight">
         <div class="cardHead">
           <h3>Month Progress</h3>
-          <button class="ghostIcon" type="button" title="Analytics" @click="toast('Analytics: demo')">
+          <button class="ghostIcon" type="button" title="Analytics" @click="notify('Analytics: demo', 'info')">
             <svg viewBox="0 0 24 24" fill="none"><path d="M6 19V5M12 19V9M18 19v-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4 19h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
           </button>
         </div>
@@ -226,7 +226,7 @@
           <h3>Month Goal’s</h3>
           <div class="rightTools">
             <div class="chip">{{ doneGoals }}/{{ goals.length }}</div>
-            <button class="ghostIcon" type="button" title="Edit" @click="toast('Goals edit: demo')">
+            <button class="ghostIcon" type="button" title="Edit" @click="notify('Goals edit: demo', 'info')">
               <svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4l10.5-10.5a2.8 2.8 0 0 0-4-4L4 16v4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M13.5 6.5 17.5 10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
             </button>
           </div>
@@ -274,7 +274,7 @@
       <article class="card lastProjects">
         <div class="cardHead">
           <h3>Last project’s</h3>
-          <button class="ghostIcon" type="button" @click="toast('Archive: demo')">Open archive</button>
+          <button class="ghostIcon" type="button" @click="success('Archive: demo')">Open archive</button>
         </div>
 
         <div class="projGrid">
@@ -338,18 +338,14 @@
         </form>
       </div>
     </div>
-
-    <!-- Toast -->
-    <div class="toast" :class="{ on: toastState.on }">{{ toastState.msg }}</div>
   </div>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { useNotification } from '@/composables/useNotification'
 
-// ===
-// NOTE: Sizda aside/layout allaqachon borligi uchun bu view faqat dashboard content vidjetlarini beradi.
-// ===
+const { success, error: errorNotif, notify } = useNotification()
 
 const userName = 'User'
 const initials = computed(() => userName.split(' ').map(s => s[0]).slice(0,2).join('').toUpperCase() || 'U')
@@ -496,10 +492,14 @@ const workAreaPath = computed(() => areaPath(workData.value))
 const medAreaPath = computed(() => areaPath(medData.value))
 
 function randomizeWeek() {
-  state.week.work = state.week.work.map(() => randInt(18, 56))
-  state.week.meditation = state.week.meditation.map(() => randInt(10, 26))
-  persist()
-  toast('Weekly data yangilandi')
+  try {
+    state.week.work = state.week.work.map(() => randInt(18, 56))
+    state.week.meditation = state.week.meditation.map(() => randInt(10, 26))
+    persist()
+    success('Weekly data yangilandi')
+  } catch (e) {
+    errorNotif('Xatolik: ' + e.message)
+  }
 }
 
 // --- donut ---
@@ -594,14 +594,14 @@ function addNote(id) {
   if (note === null) return
   t.note = note
   persist()
-  toast('Note saqlandi')
+  success('Note saqlandi')
 }
 
 function deleteTask(id) {
   taskMenuId.value = null
   state.tasks = state.tasks.filter(x => x.id !== id)
   persist()
-  toast('Task o‘chirildi')
+  success('Task o‘chirildi')
 }
 
 function closeModal() {
@@ -609,7 +609,21 @@ function closeModal() {
 }
 
 function submitModal() {
-  if (!modal.form.title) return
+  // Validatsiya
+  if (!modal.form.title || !modal.form.title.trim()) {
+    errorNotif('Sarlavha talab qilinadi')
+    return
+  }
+
+  if (modal.type === 'task' && modal.form.when && modal.form.when.length > 50) {
+    errorNotif('When 50 ta belgidan ortiq bo\'lmasligi kerak')
+    return
+  }
+
+  if (modal.type === 'project' && modal.form.desc && modal.form.desc.length > 200) {
+    errorNotif('Tavsif 200 ta belgidan ortiq bo\'lmasligi kerak')
+    return
+  }
 
   if (modal.type === 'task') {
     if (modal.mode === 'edit' && modal.editingId) {
@@ -644,7 +658,7 @@ function submitModal() {
   }
 
   persist()
-  toast('Saved')
+  success('Saqlandi')
   closeModal()
 }
 
@@ -671,7 +685,7 @@ function downloadReport() {
   a.download = `dashboard-report-${new Date().toISOString().slice(0, 10)}.json`
   a.click()
   URL.revokeObjectURL(url)
-  toast('Report yuklab olindi')
+  success('Report yuklab olindi')
 }
 
 async function shareReport() {
@@ -681,7 +695,7 @@ async function shareReport() {
   try {
     if (navigator.share) {
       await navigator.share({ title: 'Dashboard Report', text })
-      toast('Shared')
+      success('Share qilindi')
       return
     }
   } catch {
@@ -690,21 +704,10 @@ async function shareReport() {
 
   try {
     await navigator.clipboard.writeText(text + '\n\n' + JSON.stringify(data, null, 2))
-    toast('Clipboardga copy qilindi')
+    success('Clipboardga copy qilindi')
   } catch {
-    toast('Share: ruxsat yo‘q')
+    success('Share: ruxsat yo‘q')
   }
-}
-
-// --- toast ---
-const toastState = reactive({ on: false, msg: '' })
-let toastTimer = null
-
-function toast(msg) {
-  toastState.msg = msg
-  toastState.on = true
-  if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => (toastState.on = false), 2200)
 }
 
 // --- utils ---
@@ -783,7 +786,7 @@ function uid(prefix) { return `${prefix}_${Math.random().toString(16).slice(2)}_
   font-weight: 800;
 }
 
-.createWrap{position: relative;}
+.createWrap{position: relative; z-index: 100;}
 .menuPopup{
   position:absolute;
   right: 0;
@@ -795,9 +798,9 @@ function uid(prefix) { return `${prefix}_${Math.random().toString(16).slice(2)}_
   background: rgba(255,255,255,.78);
   backdrop-filter: blur(18px);
   box-shadow: 0 24px 70px rgba(0,0,0,.18);
-  z-index: 9;
+  z-index: 1000;
 }
-.menuPopup.small{width: 160px; top: 38px;}
+.menuPopup.small{width: 160px; top: 38px; z-index: 1000;}
 .menuItem{
   width:100%;
   text-align:left;
@@ -981,7 +984,7 @@ function uid(prefix) { return `${prefix}_${Math.random().toString(16).slice(2)}_
 .miniTitle2{font-weight: 900; letter-spacing: -0.02em;}
 .miniMeta{margin-top: 8px; opacity: .6; font-weight: 750;}
 
-.kebabWrap{position: relative;}
+.kebabWrap{position: relative; z-index: 100;}
 .kebab{
   width: 34px; height: 34px;
   border-radius: 12px;
@@ -1075,25 +1078,6 @@ function uid(prefix) { return `${prefix}_${Math.random().toString(16).slice(2)}_
   cursor:pointer;
   font-weight: 800;
 }
-
-.toast{
-  position: fixed;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%) translateY(20px);
-  opacity: 0;
-  pointer-events:none;
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.80);
-  color: #fff;
-  font-weight: 800;
-  box-shadow: 0 20px 70px rgba(0,0,0,.25);
-  transition: .22s ease;
-  z-index: 99;
-}
-.toast.on{opacity: 1; transform: translateX(-50%) translateY(0px);}
 
 @media (max-width: 1100px){
   .grid{grid-template-columns: 1fr;}
@@ -1284,17 +1268,6 @@ function uid(prefix) { return `${prefix}_${Math.random().toString(16).slice(2)}_
   .field input, .field select, .field textarea {
     padding: 10px;
     font-size: 16px;
-  }
-
-  .toast {
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-    transform: translateY(20px);
-  }
-
-  .toast.on {
-    transform: translateY(0px);
   }
 }
 </style>
