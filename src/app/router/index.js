@@ -48,10 +48,10 @@ const routes = [
         meta: { requiresAuth: true, title: 'Sozlamalar' },
       },
       {
-        path: 'cluck-uzbekistan',
-        name: 'cluck-uzbekistan',
-        component: () => import('../../modules/integraions/CluckUzbekistan.vue'),
-        meta: { requiresAuth: true, title: 'Cluck Uzbekistan' },
+        path: 'click-uzbekistan',
+        name: 'click-uzbekistan',
+        component: () => import('../../modules/integraions/ClickUzbekistan.vue'),
+        meta: { requiresAuth: true, title: 'Click Uzbekistan' },
       },
       {
         path: 'uyqur',

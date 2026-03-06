@@ -25,7 +25,7 @@
         <RouterLink to="/expenses" @click="closeSidebar"><i class="bi bi-currency-dollar"></i>Xarajatlar</RouterLink>
         <RouterLink to="/reports" @click="closeSidebar"><i class="bi bi-bar-chart"></i>Hisobotlar</RouterLink>
         <li class="nav-name">Integratsiyalar</li>
-        <RouterLink to="/cluck-uzbekistan" @click="closeSidebar"><i class="bi bi-plug"></i>Click</RouterLink>
+        <RouterLink to="/click-uzbekistan" @click="closeSidebar"><i class="bi bi-plug"></i>Click</RouterLink>
         <RouterLink to="/uyqur" @click="closeSidebar"><i class="bi bi-phone"></i>Uyqur App</RouterLink>
         <RouterLink to="/monetary" @click="closeSidebar"><i class="bi bi-bank"></i>Monetary</RouterLink>
         <li class="nav-name">Sozlamalar</li>
@@ -73,11 +73,10 @@
 .sidebar {
   width: 260px;
   padding: 24px;
-  background: #ffffff3d;
+  background: #ffffff;
   border-radius: 25px;
   box-shadow: 0 0 30px #00000014;
   border: 1px solid #e5e7eb;
-  backdrop-filter: blur(10px);
   position: relative;
   flex-shrink: 0;
 }
