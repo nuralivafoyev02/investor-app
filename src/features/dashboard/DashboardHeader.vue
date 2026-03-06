@@ -1,7 +1,7 @@
 <template>
   <header class="dashboard-header">
     <div>
-      <h1 class="greeting-text">{{ t('dashboard.greeting') }} <span class="user-name">{{ userName }}</span></h1>
+      <h1 class="greeting-text">{{ t('dashboard.greeting') }}, <span class="user-name">{{ userName }}!</span></h1>
       <p class="greeting-sub">{{ t('dashboard.subtitle') }}</p>
     </div>
 

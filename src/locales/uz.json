@@ -110,7 +110,7 @@
     }
   },
   "dashboard": {
-    "greeting": "Salom, Boshliq!",
+    "greeting": "Salom",
     "subtitle": "Bugun nimalar bo'layotganini ko'ring.",
     "actions": {
       "create": "Yaratish",

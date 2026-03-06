@@ -125,7 +125,7 @@ async function handleLogin() {
   await new Promise(resolve => setTimeout(resolve, 1200))
 
   if (formData.email === 'admin@example.com' && formData.password === 'password') {
-    const user = { id: '1', email: formData.email, name: 'Portfolio Manager' }
+    const user = { id: '1', email: formData.email, name: '' }
     localStorage.setItem('token', 'session_' + Math.random().toString(36).slice(2))
     localStorage.setItem('user', JSON.stringify(user))
     

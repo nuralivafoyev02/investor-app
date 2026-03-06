@@ -110,7 +110,7 @@
     }
   },
   "dashboard": {
-    "greeting": "Hi, Shief!",
+    "greeting": "Hi",
     "subtitle": "Here’s what’s happening today.",
     "actions": {
       "create": "Create",

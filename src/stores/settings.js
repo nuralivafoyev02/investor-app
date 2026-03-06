@@ -5,7 +5,7 @@ const STORAGE_KEY = 'app-settings'
 
 const defaultSettings = {
   profile: {
-    fullName: 'Admin Portfolio Manager',
+    fullName: '',
     email: 'admin@example.com',
     phone: '+998 90 123 45 67',
     avatar: 'AD'
@@ -16,7 +16,7 @@ const defaultSettings = {
     browser: true
   },
   system: {
-    language: 'en',
+    language: 'uz',
     theme: 'light',
     currency: 'UZS'
   }
