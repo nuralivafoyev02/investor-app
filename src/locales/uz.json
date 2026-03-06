@@ -1,270 +1,427 @@
 {
-    "nav": {
-        "dashboard": "Boshqaruv paneli",
-        "investors": "Investorlar",
-        "projects": "Loyihalar portfeli",
-        "vaults": "Raqamli omborlar",
-        "expenses": "Xarajatlar jurnali",
-        "reports": "Samaradorlik tahlili",
-        "settings": "Tizim sozlamalari",
-        "integrations": "Integratsiyalar",
-        "systemTitle": "Tizim"
+  "nav": {
+    "dashboard": "Boshqaruv paneli",
+    "investors": "Investorlar",
+    "projects": "Loyihalar portfeli",
+    "vaults": "Raqamli omborlar",
+    "expenses": "Xarajatlar jurnali",
+    "reports": "Samaradorlik tahlili",
+    "settings": "Tizim sozlamalari",
+    "integrations": "Integratsiyalar",
+    "systemTitle": "Tizim"
+  },
+  "common": {
+    "save": "O'zgarishlarni saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "search": "Qidiruv...",
+    "loading": "Yuklanmoqda...",
+    "actions": "Harakatlar",
+    "edit": "Tahrirlash",
+    "remove": "O'chirish",
+    "status": "Holat",
+    "active": "Faol",
+    "inactive": "Faol emas",
+    "investor": "Investor",
+    "phone": "Telefon",
+    "capital": "Sarmoya",
+    "date": "Sana",
+    "searchComing": "Qidiruv funksiyasi tez orada qo'shiladi",
+    "noNotifications": "Sizda yangi bildirishnomalar yo'q",
+    "profileDetails": "Foydalanuvchi profili tafsilotlari",
+    "moreDetails": "Batafsil ma'lumot",
+    "analyticsView": "Tahliliy ko'rinish",
+    "goalEditComing": "Maqsadlarni tahrirlash keyingi nashrda yoqiladi",
+    "archiveViewed": "Arxiv ko'rildi",
+    "created": "{type} muvaffaqiyatli yaratildi",
+    "changesSaved": "O'zgarishlar saqlandi",
+    "removed": "Element o'chirildi",
+    "addNote": "Eslatma qo'shing:",
+    "noteAdded": "Eslatma qo'shildi",
+    "statsRandomized": "Haftalik statistika tasodifiy o'zgartirildi",
+    "reportExported": "Hisobot eksport qilindi",
+    "linkCopied": "Havola buferga nusxalandi",
+    "shareNotSupported": "Ushbu qurilmada almashish qo'llab-quvvatlanmaydi",
+    "noData": "Maʼlumot topilmadi",
+    "close": "Yopish",
+    "navigate": "Oʻtilmoqda",
+    "notifications": "Bildirishnomalar",
+    "profile": "Profil",
+    "back": "Orqaga",
+    "home": "Bosh sahifaga qaytish",
+    "currency": "Valyuta",
+    "updated": "{type} muvaffaqiyatli yangilandi",
+    "createdSimple": "Muvaffaqiyatli yaratildi",
+    "deleteConfirm": "Ushbu elementni o‘chirishni tasdiqlaysizmi?",
+    "errorTitle": "Xatolik",
+    "successTitle": "Muvaffaqiyat",
+    "warningTitle": "Ogohlantirish",
+    "infoTitle": "Ma’lumot"
+  },
+  "settings": {
+    "title": "Tizim sozlamalari",
+    "subtitle": "Tajribangizni va xavfsizlik protokollarini shaxsiylashtiring",
+    "tabs": {
+      "profile": "Profil",
+      "alerts": "Bildirishnomalar",
+      "preferences": "Interfeys",
+      "security": "Xavfsizlik",
+      "governance": "Boshqaruv",
+      "danger": "Muxim",
+      "notifications": "Bildirishnomalar"
     },
-    "common": {
-        "save": "O'zgarishlarni saqlash",
-        "cancel": "Bekor qilish",
-        "delete": "O'chirish",
-        "search": "Qidiruv...",
-        "loading": "Yuklanmoqda...",
-        "actions": "Harakatlar",
-        "edit": "Tahrirlash",
-        "remove": "O'chirish",
-        "status": "Holat",
-        "active": "Faol",
-        "inactive": "Faol emas",
-        "investor": "Investor",
-        "phone": "Telefon",
-        "capital": "Sarmoya",
-        "date": "Sana",
-        "searchComing": "Qidiruv funksiyasi tez orada qo'shiladi",
-        "noNotifications": "Sizda yangi bildirishnomalar yo'q",
-        "profileDetails": "Foydalanuvchi profili tafsilotlari",
-        "moreDetails": "Batafsil ma'lumot",
-        "analyticsView": "Tahliliy ko'rinish",
-        "goalEditComing": "Maqsadlarni tahrirlash keyingi nashrda yoqiladi",
-        "archiveViewed": "Arxiv ko'rildi",
-        "created": "{type} muvaffaqiyatli yaratildi",
-        "changesSaved": "O'zgarishlar saqlandi",
-        "removed": "Element o'chirildi",
-        "addNote": "Eslatma qo'shing:",
-        "noteAdded": "Eslatma qo'shildi",
-        "statsRandomized": "Haftalik statistika tasodifiy o'zgartirildi",
-        "reportExported": "Hisobot eksport qilindi",
-        "linkCopied": "Havola buferga nusxalandi",
-        "shareNotSupported": "Ushbu qurilmada almashish qo'llab-quvvatlanmaydi"
+    "preferences": {
+      "title": "Umumiy afzalliklar",
+      "theme": "Ekran mavzusi",
+      "themeDesc": "Yorug' va qorong'i vizual estetika o'rtasida almashish",
+      "language": "Tizim tili",
+      "languageDesc": "Interfeys uchun afzal ko'rgan tilni tanlang",
+      "light": "Yorug' rejim",
+      "dark": "Qorong'i rejim"
     },
-    "settings": {
-        "title": "Tizim sozlamalari",
-        "subtitle": "Tajribangizni va xavfsizlik protokollarini shaxsiylashtiring",
-        "tabs": {
-            "identity": "Shaxsiyat",
-            "alerts": "Bildirishnomalar",
-            "preferences": "Afzalliklar",
-            "security": "Xavfsizlik",
-            "governance": "Boshqaruv"
-        },
-        "preferences": {
-            "title": "Umumiy afzalliklar",
-            "theme": "Ekran mavzusi",
-            "themeDesc": "Yorug' va qorong'i vizual estetika o'rtasida almashish",
-            "language": "Tizim tili",
-            "languageDesc": "Interfeys uchun afzal ko'rgan tilni tanlang",
-            "light": "Yorug' rejim",
-            "dark": "Qorong'i rejim"
-        }
+    "sections": {
+      "profileTitle": "Shaxsiy maʼlumotlar",
+      "notificationsTitle": "Bildirishnomalarni boshqarish",
+      "securityTitle": "Xavfsizlik boshqaruvi",
+      "dangerTitle": "Muhim amallar",
+      "profileName": "Toʻliq ism",
+      "profileEmail": "Tasdiqlangan email",
+      "profilePhone": "Bogʻlanish telefoni",
+      "emailNotifications": "Email bildirishnomalari",
+      "emailNotificationsDesc": "Muhim yangilanishlar uchun email orqali xabar oling.",
+      "pushNotifications": "Push bildirishnomalari",
+      "pushNotificationsDesc": "Muhim yangilanishlar uchun push xabarlar oling.",
+      "multiFactor": "Ikki bosqichli himoya",
+      "multiFactorDesc": "Hisobingizga qoʻshimcha himoya qatlamini qoʻshing.",
+      "changePassword": "Asosiy kalitni almashtirish",
+      "changePasswordDesc": "Kirish parolini yangilang.",
+      "logout": "Sessiyani tugatish",
+      "logoutDesc": "Joriy sessiyani darhol yakunlang.",
+      "wipe": "Lokal xotirani tozalash",
+      "wipeDesc": "Keshlangan maʼlumotlarni oʻchirib, ilovani qayta holatga keltiring."
     },
-    "dashboard": {
-        "greeting": "Salom, {name}!",
-        "subtitle": "Bugun nimalar bo'layotganini ko'ring.",
-        "actions": {
-            "create": "Yaratish",
-            "newTask": "Yangi vazifa",
-            "newProject": "Yangi loyiha",
-            "downloadReport": "Hisobotni yuklash"
-        }
+    "actions": {
+      "saveAll": "Barcha o‘zgarishlarni saqlash",
+      "configure": "Sozlash",
+      "reset": "Qayta tiklash",
+      "logout": "Chiqish",
+      "wipe": "Maʼlumotni tozalash",
+      "wipeConfirm": "Qaytarib bo‘lmaydigan amal. Barcha lokal maʼlumotlar o‘chirilsinmi?"
+    }
+  },
+  "dashboard": {
+    "greeting": "Salom, Boshliq!",
+    "subtitle": "Bugun nimalar bo'layotganini ko'ring.",
+    "actions": {
+      "create": "Yaratish",
+      "newTask": "Yangi vazifa",
+      "newProject": "Yangi loyiha",
+      "downloadReport": "Hisobotni yuklash"
     },
-    "investors": {
-        "title": "Investorlarni boshqarish",
-        "subtitle": "Investorlar portfelini boshqaring va kuzatib boring",
-        "add": "Investor qo'shish",
-        "searchPlaceholder": "Ism, email yoki telefon orqali qidirish...",
-        "allStatuses": "Barcha holatlar",
-        "modal": {
-            "add": "Yangi investor qo'shish",
-            "edit": "Investor ma'lumotlarini tahrirlash",
-            "register": "Investorni ro'yxatdan o'tkazish",
-            "update": "Ma'lumotni yangilash",
-            "deleteConfirm": "Haqiqatan ham ushbu investorni o'chirib tashlamoqchimisiz? Ushbu amalni bekor qilib bo'lmaydi."
-        },
-        "form": {
-            "name": "To'liq ism",
-            "email": "Email manzili",
-            "phone": "Telefon raqami",
-            "investment": "Dastlabki investitsiya",
-            "status": "Portfel holati"
-        }
+    "stats": {
+      "title": "Umumiy maʼlumot",
+      "share": "Ulashish",
+      "more": "Batafsil",
+      "tasksDone": "Bajarilgan vazifalar",
+      "projectsStopped": "Toʻxtatilgan loyihalar",
+      "monthlyPlan": "Oylik rejadan {value}%"
+    },
+    "chart": {
+      "title": "Haftalik jarayon",
+      "randomize": "Maʼlumotni yangilash",
+      "work": "Ish",
+      "meditation": "Tahlil",
+      "workShort": "I",
+      "meditationShort": "T",
+      "aria": "Haftalik jarayon grafigi"
+    },
+    "goals": {
+      "title": "Oy maqsadlari",
+      "edit": "Maqsadlarni tahrirlash"
+    },
+    "tasks": {
+      "title": "Vazifalar",
+      "add": "Vazifa qoʻshish",
+      "addNote": "Eslatma qoʻshish",
+      "private": "Shaxsiy"
     },
     "projects": {
-        "title": "Loyihalar portfeli",
-        "subtitle": "Strategik tashabbuslaringizni kuzatib boring va boshqaring",
-        "add": "Yangi loyiha",
-        "searchPlaceholder": "Loyihalarni qidirish...",
-        "empty": "Kriterialaringizga mos keladigan loyihalar topilmadi",
-        "clearFilters": "Filtrlarni tozalash",
-        "footerHint": "Loyiha tafsilotlarini boshqarish uchun bosing",
-        "status": {
-            "inProgress": "Jarayonda",
-            "planning": "Rejalashtirish",
-            "completed": "Tugallangan"
-        },
-        "stats": {
-            "budget": "Byudjet",
-            "deadline": "Muddat",
-            "completion": "Bajarilishi"
-        },
-        "modal": {
-            "add": "Yangi loyihani boshlash",
-            "edit": "Loyiha tafsilotlarini tahrirlash",
-            "create": "Loyihani boshlash",
-            "update": "O'zgarishlarni qo'llash",
-            "deleteConfirm": "Haqiqatan ham ushbu loyihani o'chirib tashlamoqchimisiz? Ma'lumotlar abadiy yo'qoladi."
-        },
-        "form": {
-            "name": "Loyiha nomi",
-            "description": "Loyiha haqida umumiy ma'lumot",
-            "budget": "Umumiy byudjet (UZS)",
-            "deadline": "Kutilayotgan muddat",
-            "status": "Loyiha holati",
-            "progress": "Bosqichning bajarilishi (%)"
-        }
+      "title": "Soʻnggi loyihalar",
+      "archive": "Arxivni ochish",
+      "noDescription": "Tavsif kiritilmagan."
     },
-    "reports": {
-        "title": "Samaradorlik tahlili",
-        "subtitle": "Moliyaviy ekotizimingiz haqida chuqur ma'lumotlar",
-        "export": "PDF eksport",
-        "regenerate": "Hisobotni qayta yaratish",
-        "start": "Boshlanish davri",
-        "end": "Tugash davri",
-        "summary": "Moliyaviy xulosa",
-        "revenue": "Umumiy daromad",
-        "expenses": "Operatsion xarajatlar",
-        "net": "Sof operatsion daromad",
-        "distribution": "Xarajatlar taqsimoti",
-        "breakdown": "Kategoriyalangan taqsimot",
-        "noReport": "Faol hisobot yo'q",
-        "noReportSubtitle": "Sana oralig'ini sozlang va tahlillarni ko'rish uchun 'Hisobotni qayta yaratish' tugmasini bosing.",
-        "department": "Bo'lim / Kategoriya",
-        "total": "Jami log",
-        "allocation": "Taqsimot"
+    "monthProgress": {
+      "title": "Oylik progress",
+      "caption": "oʻtgan oyga nisbatan",
+      "overview": "Umumiy koʻrinish",
+      "download": "Hisobotni yuklash"
     },
-    "finance": {
-        "vaults": {
-            "title": "Raqamli omborlar",
-            "subtitle": "Suyuq aktivlaringiz va g'aznalaringizni xavfsiz boshqarish",
-            "create": "Ombor yaratish",
-            "totalAssets": "Umumiy suyuq aktivlar",
-            "balance": "Joriy balans",
-            "transfer": "Mablag'larni o'tkazish",
-            "modal": {
-                "title": "Yangi raqamli ombor yaratish",
-                "confirm": "Yaratishni tasdiqlash",
-                "decommissionConfirm": "Ushbu omborni butunlay to'xtatish kerakmi? Mablag'lar qo'lda ko'chirilishi kerak."
-            },
-            "form": {
-                "name": "Ombor nomi",
-                "type": "Hisob turi",
-                "balance": "Dastlabki balans",
-                "color": "Mavzu rangi",
-                "types": {
-                    "cash": "Naqd pul / Jismoniy",
-                    "card": "Raqamli / Karta",
-                    "bank": "Bank hisob raqami"
-                }
-            }
-        },
-        "expenses": {
-            "title": "Xarajatlarni kuzatib borish",
-            "subtitle": "Har bir tranzaksiyani kuzatib boring va toifalarga ajrating",
-            "add": "Xarajatni kiritish",
-            "form": {
-                "amount": "Amal summasi",
-                "category": "Tasniflash",
-                "cashbox": "Manba ombori",
-                "date": "Tranzaksiya sanasi",
-                "description": "Asoslash / Izohlar"
-            },
-            "modal": {
-                "add": "Yangi xarajatni qayd etish",
-                "deleteConfirm": "Ushbu xarajat yozuvini bekor qilasizmi?"
-            }
-        }
+    "modal": {
+      "create": "Yaratish",
+      "createTitle": "{type} yaratish",
+      "editTitle": "{type} tahrirlash",
+      "fields": {
+        "title": "Sarlavha",
+        "when": "Vaqti",
+        "type": "Turi",
+        "status": "Holati",
+        "description": "Tavsif"
+      },
+      "placeholders": {
+        "taskTitle": "masalan, HR bilan uchrashuv",
+        "projectTitle": "masalan, investor paneli",
+        "when": "Bugun kechqurun / ertaga tongda",
+        "description": "Qisqa tavsif..."
+      },
+      "options": {
+        "meeting": "Uchrashuv",
+        "work": "Ish",
+        "personal": "Shaxsiy"
+      }
     },
-    "integrations": {
-        "common": {
-            "online": "Tizim onlayn",
-            "offline": "Gateway offlayn",
-            "validate": "Ulanishni tekshirish",
-            "save": "Ma'lumotlarni saqlash",
-            "ledger": "Yaqindagi daftar",
-            "settled": "Hal qilindi",
-            "noLogs": "Yaqinda sinxronizatsiya jurnallari topilmadi."
-        },
-        "click": {
-            "subtitle": "Uzluksiz tranzaksiyalar uchun premium to'lov shlyuzi integratsiyasi"
-        },
-        "uyqur": {
-            "subtitle": "Mobil aloqa va foydalanuvchilar o'sishi ko'rsatkichlarini sinxronlashtirish"
-        },
-        "monetary": {
-            "subtitle": "Bozordagi ayirboshlash kurslari va ko'p valyutali indeksatsiya"
-        }
-    },
-    "auth": {
-        "login": {
-            "title": "Xush kelibsiz",
-            "subtitle": "Investorlar bilan aloqalarni boshqarish portali",
-            "email": "Email manzili",
-            "password": "Xavfsizlik kaliti",
-            "remember": "Qurilmani eslab qolish",
-            "forgot": "Kalitni tiklash",
-            "submit": "Identifikatsiyadan o'tish",
-            "demo": "Demo portal",
-            "error": {
-                "emailReq": "Email talab qilinadi",
-                "emailInvalid": "Email manzili noto'g'ri",
-                "passReq": "Kalit talab qilinadi",
-                "passMin": "Kalit kamida 6 ta belgidan iborat bo'lishi kerak",
-                "denied": "Kirish rad etildi. Ruxsatsiz ma'lumotlar."
-            }
-        },
-        "forgot": {
-            "title": "Hisobni tiklash",
-            "subtitle": "Kirishni qayta tiklash uchun xavfsizlik ma'lumotlarini yangilang",
-            "back": "Kirishga qaytish",
-            "email": "Email manzili",
-            "submit": "Kod yuborish",
-            "sending": "Yuborilmoqda...",
-            "code": "Tiklash kodi",
-            "newPass": "Yangi parol",
-            "confirmPass": "Parolni tasdiqlash",
-            "change": "Parolni o'zgartirish",
-            "changing": "Saqlanmoqda...",
-            "sent": "Tiklash kodi {email} manziliga yuborildi",
-            "resend": "Qayta yuborish",
-            "noCode": "Kod kelmadimi?",
-            "success": "Xavfsizlik parametrlari muvaffaqiyatli yangilandi",
-            "ready": "Parol o'zgartirildi",
-            "return": "Kirish sahifasiga qaytish",
-            "error": {
-                "emailReq": "Email manzili talab qilinadi",
-                "emailInvalid": "Email manzili noto'g'ri",
-                "codeReq": "Tiklash kodi talab qilinadi",
-                "passReq": "Parol talab qilinadi",
-                "passMin": "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
-                "mismatch": "Parollar mos kelmadi",
-                "invalidCode": "Tiklash protokoli noto'g'ri"
-            }
-        }
-    },
-    "system": {
-        "notFound": {
-            "title": "404 - Sahifa topilmadi",
-            "subtitle": "So'ralgan tugun joriy tarmoqda mavjud emas.",
-            "back": "Bosh sahifaga qaytish"
-        },
-        "titles": {
-            "app": "Antigravity Investor",
-            "separator": "|"
-        }
+    "seed": {
+      "goals": {
+        "investorUpdate": "Investor bilan yangilash qo‘ng‘irog‘i",
+        "cashflowReview": "Pul oqimini ko‘rib chiqish",
+        "expenseApproval": "Obyekt xarajatini tasdiqlash",
+        "monitoring": "Partiyani monitoring qilish"
+      },
+      "tasks": {
+        "meetFinance": "Moliya rahbari bilan uchrashuv",
+        "approvePayout": "Pudratchi to‘lovini tasdiqlash"
+      },
+      "when": {
+        "tonight": "Bugun kechqurun",
+        "nextMorning": "Ertaga tongda"
+      },
+      "projects": {
+        "rolloutTitle": "16-Lot ishga tushirish",
+        "rolloutDesc": "Mobil jarayon va investor hisobotlari yaxshilandi.",
+        "warehouseTitle": "Ombor sinxroni",
+        "warehouseDesc": "Kirim-chiqim ombor oqimi yakunlandi.",
+        "capitalTitle": "Kapital paneli",
+        "capitalDesc": "Investor hissasi bo‘yicha umumiy ko‘rinish tayyor."
+      }
     }
+  },
+  "investors": {
+    "title": "Investorlarni boshqarish",
+    "subtitle": "Investorlar portfelini boshqaring va kuzatib boring",
+    "add": "Investor qo'shish",
+    "searchPlaceholder": "Ism, email yoki telefon orqali qidirish...",
+    "allStatuses": "Barcha holatlar",
+    "modal": {
+      "add": "Yangi investor qo'shish",
+      "edit": "Investor ma'lumotlarini tahrirlash",
+      "register": "Investorni ro'yxatdan o'tkazish",
+      "update": "Ma'lumotni yangilash",
+      "deleteConfirm": "Haqiqatan ham ushbu investorni o'chirib tashlamoqchimisiz? Ushbu amalni bekor qilib bo'lmaydi."
+    },
+    "form": {
+      "name": "To'liq ism",
+      "email": "Email manzili",
+      "phone": "Telefon raqami",
+      "investment": "Dastlabki investitsiya",
+      "status": "Portfel holati"
+    }
+  },
+  "projects": {
+    "title": "Loyihalar portfeli",
+    "subtitle": "Strategik tashabbuslaringizni kuzatib boring va boshqaring",
+    "add": "Yangi loyiha",
+    "searchPlaceholder": "Loyihalarni qidirish...",
+    "empty": "Kriterialaringizga mos keladigan loyihalar topilmadi",
+    "clearFilters": "Filtrlarni tozalash",
+    "footerHint": "Loyiha tafsilotlarini boshqarish uchun bosing",
+    "status": {
+      "inProgress": "Jarayonda",
+      "planning": "Rejalashtirish",
+      "completed": "Tugallangan"
+    },
+    "stats": {
+      "budget": "Byudjet",
+      "deadline": "Muddat",
+      "completion": "Bajarilishi"
+    },
+    "modal": {
+      "add": "Yangi loyihani boshlash",
+      "edit": "Loyiha tafsilotlarini tahrirlash",
+      "create": "Loyihani boshlash",
+      "update": "O'zgarishlarni qo'llash",
+      "deleteConfirm": "Haqiqatan ham ushbu loyihani o'chirib tashlamoqchimisiz? Ma'lumotlar abadiy yo'qoladi."
+    },
+    "form": {
+      "name": "Loyiha nomi",
+      "description": "Loyiha haqida umumiy ma'lumot",
+      "budget": "Umumiy byudjet (UZS)",
+      "deadline": "Kutilayotgan muddat",
+      "status": "Loyiha holati",
+      "progress": "Bosqichning bajarilishi (%)"
+    }
+  },
+  "reports": {
+    "title": "Samaradorlik tahlili",
+    "subtitle": "Moliyaviy ekotizimingiz haqida chuqur ma'lumotlar",
+    "export": "PDF eksport",
+    "regenerate": "Hisobotni qayta yaratish",
+    "start": "Boshlanish davri",
+    "end": "Tugash davri",
+    "summary": "Moliyaviy xulosa",
+    "revenue": "Umumiy daromad",
+    "expenses": "Operatsion xarajatlar",
+    "net": "Sof operatsion daromad",
+    "distribution": "Xarajatlar taqsimoti",
+    "breakdown": "Kategoriyalangan taqsimot",
+    "noReport": "Faol hisobot yo'q",
+    "noReportSubtitle": "Sana oralig'ini sozlang va tahlillarni ko'rish uchun 'Hisobotni qayta yaratish' tugmasini bosing.",
+    "department": "Bo'lim / Kategoriya",
+    "total": "Jami log",
+    "allocation": "Taqsimot"
+  },
+  "finance": {
+    "vaults": {
+      "title": "Raqamli omborlar",
+      "subtitle": "Suyuq aktivlaringiz va g'aznalaringizni xavfsiz boshqarish",
+      "create": "Ombor yaratish",
+      "totalAssets": "Umumiy suyuq aktivlar",
+      "balance": "Joriy balans",
+      "transfer": "Mablag'larni o'tkazish",
+      "modal": {
+        "title": "Yangi raqamli ombor yaratish",
+        "confirm": "Yaratishni tasdiqlash",
+        "decommissionConfirm": "Ushbu omborni butunlay to'xtatish kerakmi? Mablag'lar qo'lda ko'chirilishi kerak."
+      },
+      "form": {
+        "name": "Ombor nomi",
+        "type": "Hisob turi",
+        "balance": "Dastlabki balans",
+        "color": "Mavzu rangi",
+        "types": {
+          "cash": "Naqd pul / Jismoniy",
+          "card": "Raqamli / Karta",
+          "bank": "Bank hisob raqami"
+        }
+      }
+    },
+    "expenses": {
+      "title": "Xarajatlarni kuzatib borish",
+      "subtitle": "Har bir tranzaksiyani kuzatib boring va toifalarga ajrating",
+      "add": "Xarajatni kiritish",
+      "form": {
+        "amount": "Amal summasi",
+        "category": "Tasniflash",
+        "cashbox": "Manba ombori",
+        "date": "Tranzaksiya sanasi",
+        "description": "Asoslash / Izohlar"
+      },
+      "modal": {
+        "add": "Yangi xarajatni qayd etish",
+        "deleteConfirm": "Ushbu xarajat yozuvini bekor qilasizmi?"
+      }
+    }
+  },
+  "integrations": {
+    "common": {
+      "online": "Tizim onlayn",
+      "offline": "Gateway offlayn",
+      "validate": "Ulanishni tekshirish",
+      "save": "Ma'lumotlarni saqlash",
+      "ledger": "Yaqindagi daftar",
+      "settled": "Hal qilindi",
+      "noLogs": "Yaqinda sinxronizatsiya jurnallari topilmadi."
+    },
+    "click": {
+      "subtitle": "Uzluksiz tranzaksiyalar uchun premium to'lov shlyuzi integratsiyasi",
+      "title": "Click Uzbekistan"
+    },
+    "uyqur": {
+      "subtitle": "Mobil aloqa va foydalanuvchilar o'sishi ko'rsatkichlarini sinxronlashtirish",
+      "title": "Uyqur ilovasi"
+    },
+    "monetary": {
+      "subtitle": "Bozordagi ayirboshlash kurslari va ko'p valyutali indeksatsiya",
+      "title": "Monetary"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Xush kelibsiz",
+      "subtitle": "Investorlar bilan aloqalarni boshqarish portali",
+      "email": "Email manzili",
+      "password": "Xavfsizlik kaliti",
+      "remember": "Qurilmani eslab qolish",
+      "forgot": "Kalitni tiklash",
+      "submit": "Identifikatsiyadan o'tish",
+      "demo": "Demo portal",
+      "error": {
+        "emailReq": "Email talab qilinadi",
+        "emailInvalid": "Email manzili noto'g'ri",
+        "passReq": "Kalit talab qilinadi",
+        "passMin": "Kalit kamida 6 ta belgidan iborat bo'lishi kerak",
+        "denied": "Kirish rad etildi. Ruxsatsiz ma'lumotlar."
+      }
+    },
+    "forgot": {
+      "title": "Hisobni tiklash",
+      "subtitle": "Kirishni qayta tiklash uchun xavfsizlik ma'lumotlarini yangilang",
+      "back": "Kirishga qaytish",
+      "email": "Email manzili",
+      "submit": "Kod yuborish",
+      "sending": "Yuborilmoqda...",
+      "code": "Tiklash kodi",
+      "newPass": "Yangi parol",
+      "confirmPass": "Parolni tasdiqlash",
+      "change": "Parolni o'zgartirish",
+      "changing": "Saqlanmoqda...",
+      "sent": "Tiklash kodi {email} manziliga yuborildi",
+      "resend": "Qayta yuborish",
+      "noCode": "Kod kelmadimi?",
+      "success": "Xavfsizlik parametrlari muvaffaqiyatli yangilandi",
+      "ready": "Parol o'zgartirildi",
+      "return": "Kirish sahifasiga qaytish",
+      "error": {
+        "emailReq": "Email manzili talab qilinadi",
+        "emailInvalid": "Email manzili noto'g'ri",
+        "codeReq": "Tiklash kodi talab qilinadi",
+        "passReq": "Parol talab qilinadi",
+        "passMin": "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
+        "mismatch": "Parollar mos kelmadi",
+        "invalidCode": "Tiklash protokoli noto'g'ri"
+      }
+    },
+    "footer": "Investor App. Kundalik operatsiyalar uchun barqaror boshqaruv paneli."
+  },
+  "system": {
+    "notFound": {
+      "title": "404 - Sahifa topilmadi",
+      "subtitle": "So'ralgan tugun joriy tarmoqda mavjud emas.",
+      "back": "Bosh sahifaga qaytish",
+      "description": "So‘ralgan sahifa topilmadi yoki boshqa joyga ko‘chirilgan bo‘lishi mumkin.",
+      "suggestions": "Quyidagi sahifalardan birini qidirayotgan bo‘lishingiz mumkin:"
+    },
+    "titles": {
+      "app": "Investor App",
+      "separator": "|"
+    },
+    "days": {
+      "short": {
+        "mon": "Du",
+        "tue": "Se",
+        "wed": "Ch",
+        "thu": "Pa",
+        "fri": "Ju",
+        "sat": "Sh",
+        "sun": "Ya"
+      },
+      "full": {
+        "mon": "Dushanba",
+        "tue": "Seshanba",
+        "wed": "Chorshanba",
+        "thu": "Payshanba",
+        "fri": "Juma",
+        "sat": "Shanba",
+        "sun": "Yakshanba"
+      }
+    }
+  }
 }

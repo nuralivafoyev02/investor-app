@@ -6,12 +6,8 @@
         <p class="page-subtitle">{{ t('reports.subtitle') }}</p>
       </div>
       <div class="header-actions">
-        <BaseButton variant="secondary" size="md" @click="printReport">
-          {{ t('reports.export') }}
-        </BaseButton>
-        <BaseButton variant="primary" size="md" @click="generateReport">
-          {{ t('reports.regenerate') }}
-        </BaseButton>
+        <BaseButton variant="secondary" size="md" @click="printReport">{{ t('reports.export') }}</BaseButton>
+        <BaseButton variant="primary" size="md" @click="generateReport">{{ t('reports.regenerate') }}</BaseButton>
       </div>
     </div>
 
@@ -41,9 +37,7 @@
             <div class="overview-divider"></div>
             <div class="overview-item total">
               <span class="ov-label">{{ t('reports.net') }}</span>
-              <span class="ov-value" :class="reportData.netIncome >= 0 ? 'success' : 'danger'">
-                {{ formatCurrency(reportData.netIncome) }}
-              </span>
+              <span class="ov-value" :class="reportData.netIncome >= 0 ? 'success' : 'danger'">{{ formatCurrency(reportData.netIncome) }}</span>
             </div>
           </div>
         </BaseCard>
@@ -85,229 +79,98 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from '@/composables/useI18n'
-
-// Components
+import { useFinanceStore } from '@/stores/finance'
 import BaseButton from '@/ui/base/BaseButton.vue'
 import BaseInput from '@/ui/base/BaseInput.vue'
 import BaseTable from '@/ui/base/BaseTable.vue'
 import BaseCard from '@/ui/base/BaseCard.vue'
 import BaseBadge from '@/ui/base/BaseBadge.vue'
 
+const { t } = useI18n()
+const financeStore = useFinanceStore()
 const startDate = ref(new Date().toISOString().slice(0, 7))
 const endDate = ref(new Date().toISOString().slice(0, 7))
 const reportData = ref(null)
 
-const { t } = useI18n()
-
-const logColumns = [
+const logColumns = computed(() => [
   { key: 'category', label: t('reports.department'), width: '40%' },
   { key: 'amount', label: t('reports.total'), width: '30%' },
-  { key: 'percentage', label: t('reports.allocation'), width: '30%' },
-]
+  { key: 'percentage', label: t('reports.allocation'), width: '30%' }
+])
 
-const formatCurrency = (val) => {
-  return new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', maximumFractionDigits: 0 }).format(val)
+const formatCurrency = (value) => new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', maximumFractionDigits: 0 }).format(Number(value) || 0)
+
+const inSelectedRange = (dateString) => {
+  if (!dateString) return false
+  const current = new Date(`${dateString}T00:00:00`)
+  const start = new Date(`${startDate.value}-01T00:00:00`)
+  const end = new Date(`${endDate.value}-01T23:59:59`)
+  end.setMonth(end.getMonth() + 1)
+  end.setDate(0)
+  end.setHours(23, 59, 59, 999)
+  return current >= start && current <= end
+}
+
+const buildBreakdown = (expenses) => {
+  const totalExpense = expenses.reduce((sum, item) => sum + (Number(item.amount) || 0), 0)
+  const grouped = expenses.reduce((acc, item) => {
+    const key = item.category || 'Miscellaneous'
+    acc[key] = (acc[key] || 0) + (Number(item.amount) || 0)
+    return acc
+  }, {})
+
+  return Object.entries(grouped)
+    .map(([category, amount]) => ({
+      category,
+      amount,
+      percentage: totalExpense ? Math.round((amount / totalExpense) * 100) : 0
+    }))
+    .sort((a, b) => b.amount - a.amount)
 }
 
 const generateReport = async () => {
-  // Simulate heavy computation
-  reportData.value = null
-  await new Promise(r => setTimeout(r, 800))
-  
+  if (!financeStore.cashboxes.length) await financeStore.fetchCashboxes()
+  if (!financeStore.expenses.length) await financeStore.fetchExpenses()
+
+  const expenses = financeStore.expenses.filter((item) => inSelectedRange(item.date))
+  const totalExpense = expenses.reduce((sum, item) => sum + (Number(item.amount) || 0), 0)
+  const totalIncome = financeStore.cashboxes.reduce((sum, item) => sum + (Number(item.balance) || 0), 0)
+
   reportData.value = {
-    totalIncome: 125000000,
-    totalExpense: 48200000,
-    netIncome: 76800000,
-    expenseBreakdown: [
-      { category: 'Human Capital', amount: 25000000, percentage: 52 },
-      { category: 'Infrastructure & Cloud', amount: 8500000, percentage: 18 },
-      { category: 'Marketing & Growth', amount: 12000000, percentage: 25 },
-      { category: 'Miscellaneous', amount: 2700000, percentage: 5 },
-    ]
+    totalIncome,
+    totalExpense,
+    netIncome: totalIncome - totalExpense,
+    expenseBreakdown: buildBreakdown(expenses)
   }
 }
 
-const printReport = () => {
-  window.print()
-}
+const printReport = () => window.print()
 
-// Initial generation
-generateReport()
+onMounted(async () => {
+  await generateReport()
+})
 </script>
 
 <style scoped>
-.reports-page {
-  padding: var(--space-xl);
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-xl);
-}
-
-.header-actions {
-  display: flex;
-  gap: var(--space-md);
-}
-
-.page-title {
-  font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.page-subtitle {
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.report-controls {
-  display: flex;
-  gap: var(--space-xl);
-  padding: var(--space-lg);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-xl);
-}
-
-.control-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.control-item label {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--text-muted);
-  text-transform: uppercase;
-}
-
-.analytics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xl);
-  margin-bottom: var(--space-xxl);
-}
-
-.finance-overview {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
-.overview-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.ov-label {
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.ov-value {
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.overview-divider {
-  height: 1px;
-  background: var(--border-light);
-}
-
-.overview-item.total .ov-label {
-  color: var(--text-main);
-  font-size: 16px;
-}
-
-.overview-item.total .ov-value {
-  font-size: 24px;
-  padding: 8px 16px;
-  background: var(--bg-main);
-  border-radius: var(--radius-md);
-}
-
-.distribution-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
-.dist-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.dist-info {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.dist-cat { color: var(--text-main); }
-.dist-amount { color: var(--text-muted); }
-
-.dist-bar-wrap {
-  height: 8px;
-  background: var(--bg-main);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.dist-bar-fill {
-  height: 100%;
-  background: var(--primary);
-  border-radius: var(--radius-full);
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 800;
-  margin-bottom: var(--space-lg);
-}
-
-.table-amount {
-  font-weight: 800;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 100px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.empty-illustration {
-  font-size: 64px;
-  opacity: 0.2;
-}
-
-@media print {
-  .header-actions, .report-controls, .empty-state {
-    display: none;
-  }
-}
-
-@media (max-width: 1024px) {
-  .analytics-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-lg);
-  }
-}
+.reports-page { padding: var(--space-xl); }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); }
+.header-actions { display: flex; gap: var(--space-md); }
+.page-title { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
+.page-subtitle { color: var(--text-muted); font-weight: 600; }
+.report-controls { display: flex; gap: var(--space-xl); padding: var(--space-lg); border-radius: var(--radius-lg); margin-bottom: var(--space-xl); }
+.control-item { display: flex; flex-direction: column; gap: 8px; }
+.control-item label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+.analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-bottom: var(--space-xxl); }
+.finance-overview, .distribution-list { display: flex; flex-direction: column; gap: var(--space-lg); }
+.overview-item, .dist-info { display: flex; justify-content: space-between; align-items: center; }
+.ov-label { font-weight: 700; color: var(--text-muted); }
+.ov-value { font-size: 18px; font-weight: 800; }
+.overview-divider { height: 1px; background: var(--border-light); }
+.dist-item { display: flex; flex-direction: column; gap: 8px; }
+.dist-bar-wrap { height: 8px; background: var(--bg-main); border-radius: var(--radius-full); overflow: hidden; }
+.dist-bar-fill { height: 100%; background: var(--primary); }
+.empty-state { text-align: center; padding: 100px 20px; color: var(--text-muted); }
+@media (max-width: 768px) { .page-header, .report-controls { flex-direction: column; align-items: flex-start; } .analytics-grid { grid-template-columns: 1fr; } }
 </style>

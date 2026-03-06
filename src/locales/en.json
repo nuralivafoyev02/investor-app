@@ -1,270 +1,427 @@
 {
-    "nav": {
-        "dashboard": "Dashboard",
-        "investors": "Investors",
-        "projects": "Projects Portfolio",
-        "vaults": "Digital Vaults",
-        "expenses": "Expenditure Logs",
-        "reports": "Performance Analytics",
-        "settings": "System Settings",
-        "integrations": "Integrations",
-        "systemTitle": "System"
+  "nav": {
+    "dashboard": "Dashboard",
+    "investors": "Investors",
+    "projects": "Projects Portfolio",
+    "vaults": "Digital Vaults",
+    "expenses": "Expenditure Logs",
+    "reports": "Performance Analytics",
+    "settings": "System Settings",
+    "integrations": "Integrations",
+    "systemTitle": "System"
+  },
+  "common": {
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "search": "Search...",
+    "loading": "Loading...",
+    "actions": "Actions",
+    "edit": "Edit",
+    "remove": "Remove",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "investor": "Investor",
+    "phone": "Phone",
+    "capital": "Capital",
+    "date": "Date",
+    "searchComing": "Search feature coming soon",
+    "noNotifications": "You have no new notifications",
+    "profileDetails": "User Profile details",
+    "moreDetails": "More details",
+    "analyticsView": "Analytics view",
+    "goalEditComing": "Goal editing enabled in next release",
+    "archiveViewed": "Archive viewed",
+    "created": "{type} created successfully",
+    "changesSaved": "Changes saved",
+    "removed": "Item removed",
+    "addNote": "Add note:",
+    "noteAdded": "Note added",
+    "statsRandomized": "Weekly stats randomized",
+    "reportExported": "Report exported",
+    "linkCopied": "Link copied to clipboard",
+    "shareNotSupported": "Sharing not supported on this device",
+    "noData": "No data found",
+    "close": "Close",
+    "navigate": "Navigating",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "back": "Back",
+    "home": "Go home",
+    "currency": "Currency",
+    "updated": "{type} updated successfully",
+    "createdSimple": "Created successfully",
+    "deleteConfirm": "Are you sure you want to remove this item?",
+    "errorTitle": "Error",
+    "successTitle": "Success",
+    "warningTitle": "Warning",
+    "infoTitle": "Info"
+  },
+  "settings": {
+    "title": "System Settings",
+    "subtitle": "Personalize your experience and security protocols",
+    "tabs": {
+      "profile": "Profile",
+      "alerts": "Alerts",
+      "preferences": "Interface",
+      "security": "Security",
+      "governance": "Governance",
+      "notifications": "Notifications",
+      "danger": "Danger"
     },
-    "common": {
-        "save": "Save Changes",
-        "cancel": "Cancel",
-        "delete": "Delete",
-        "search": "Search...",
-        "loading": "Loading...",
-        "actions": "Actions",
-        "edit": "Edit",
-        "remove": "Remove",
-        "status": "Status",
-        "active": "Active",
-        "inactive": "Inactive",
-        "investor": "Investor",
-        "phone": "Phone",
-        "capital": "Capital",
-        "date": "Date",
-        "searchComing": "Search feature coming soon",
-        "noNotifications": "You have no new notifications",
-        "profileDetails": "User Profile details",
-        "moreDetails": "More details",
-        "analyticsView": "Analytics view",
-        "goalEditComing": "Goal editing enabled in next release",
-        "archiveViewed": "Archive viewed",
-        "created": "{type} created successfully",
-        "changesSaved": "Changes saved",
-        "removed": "Item removed",
-        "addNote": "Add note:",
-        "noteAdded": "Note added",
-        "statsRandomized": "Weekly stats randomized",
-        "reportExported": "Report exported",
-        "linkCopied": "Link copied to clipboard",
-        "shareNotSupported": "Sharing not supported on this device"
+    "preferences": {
+      "title": "Global Preferences",
+      "theme": "Display Theme",
+      "themeDesc": "Switch between light and dark visual aesthetics",
+      "language": "System Language",
+      "languageDesc": "Select your preferred language for the interface",
+      "light": "Light Mode",
+      "dark": "Dark Mode"
     },
-    "settings": {
-        "title": "System Settings",
-        "subtitle": "Personalize your experience and security protocols",
-        "tabs": {
-            "identity": "Identity",
-            "alerts": "Alerts",
-            "preferences": "Preferences",
-            "security": "Security",
-            "governance": "Governance"
-        },
-        "preferences": {
-            "title": "Global Preferences",
-            "theme": "Display Theme",
-            "themeDesc": "Switch between light and dark visual aesthetics",
-            "language": "System Language",
-            "languageDesc": "Select your preferred language for the interface",
-            "light": "Light Mode",
-            "dark": "Dark Mode"
-        }
+    "sections": {
+      "profileTitle": "Identity Credentials",
+      "notificationsTitle": "Notifications Governance",
+      "securityTitle": "Security Governance",
+      "dangerTitle": "Terminal Actions",
+      "profileName": "Full Professional Name",
+      "profileEmail": "Verified Email Address",
+      "profilePhone": "Contact Mobile",
+      "emailNotifications": "Email Notifications",
+      "emailNotificationsDesc": "Receive email notifications for important updates.",
+      "pushNotifications": "Push Notifications",
+      "pushNotificationsDesc": "Receive push notifications for important updates.",
+      "multiFactor": "Multi-Factor Authentication",
+      "multiFactorDesc": "Add an extra layer of security to your account.",
+      "changePassword": "Change Master Key",
+      "changePasswordDesc": "Update your authentication password.",
+      "logout": "De-authenticate",
+      "logoutDesc": "Immediately end your current session.",
+      "wipe": "Wipe Local Storage",
+      "wipeDesc": "Clear all cached data and reset the app."
     },
-    "dashboard": {
-        "greeting": "Hi, {name}!",
-        "subtitle": "Here’s what’s happening today.",
-        "actions": {
-            "create": "Create",
-            "newTask": "New task",
-            "newProject": "New project",
-            "downloadReport": "Download report"
-        }
+    "actions": {
+      "saveAll": "Save All Changes",
+      "configure": "Configure",
+      "reset": "Reset",
+      "logout": "Logout",
+      "wipe": "Wipe Data",
+      "wipeConfirm": "Irreversible action. Wipe all local data?"
+    }
+  },
+  "dashboard": {
+    "greeting": "Hi, Shief!",
+    "subtitle": "Here’s what’s happening today.",
+    "actions": {
+      "create": "Create",
+      "newTask": "New task",
+      "newProject": "New project",
+      "downloadReport": "Download report"
     },
-    "investors": {
-        "title": "Investors Management",
-        "subtitle": "Manage and monitor your investor portfolio",
-        "add": "Add Investor",
-        "searchPlaceholder": "Search by name, email or phone...",
-        "allStatuses": "All Statuses",
-        "modal": {
-            "add": "Onboard New Investor",
-            "edit": "Edit Investor Details",
-            "register": "Register Investor",
-            "update": "Update Record",
-            "deleteConfirm": "Are you sure you want to remove this investor? This action cannot be undone."
-        },
-        "form": {
-            "name": "Full Name",
-            "email": "Email Address",
-            "phone": "Phone Number",
-            "investment": "Initial Investment",
-            "status": "Portfolio Status"
-        }
+    "stats": {
+      "title": "Overall Information",
+      "share": "Share",
+      "more": "More",
+      "tasksDone": "Tasks done for all time",
+      "projectsStopped": "Projects are stopped",
+      "monthlyPlan": "{value}% of monthly plan"
+    },
+    "chart": {
+      "title": "Weekly Process",
+      "randomize": "Randomize data",
+      "work": "Work",
+      "meditation": "Meditation",
+      "workShort": "W",
+      "meditationShort": "M",
+      "aria": "Weekly process chart"
+    },
+    "goals": {
+      "title": "Month Goals",
+      "edit": "Edit goals"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "add": "Add a task",
+      "addNote": "Add Note",
+      "private": "Private"
     },
     "projects": {
-        "title": "Projects Portfolio",
-        "subtitle": "Track and manage your strategic initiatives",
-        "add": "New Project",
-        "searchPlaceholder": "Search projects...",
-        "empty": "No projects found matching your criteria",
-        "clearFilters": "Clear Filters",
-        "footerHint": "Click to manage project details",
-        "status": {
-            "inProgress": "In Progress",
-            "planning": "Planning",
-            "completed": "Completed"
-        },
-        "stats": {
-            "budget": "Budget",
-            "deadline": "Deadline",
-            "completion": "Completion"
-        },
-        "modal": {
-            "add": "Initialize New Project",
-            "edit": "Edit Project Details",
-            "create": "Initialize Project",
-            "update": "Apply Changes",
-            "deleteConfirm": "Are you sure you want to delete this project? Data will be lost forever."
-        },
-        "form": {
-            "name": "Project Name",
-            "description": "Project Overview",
-            "budget": "Total Budget (UZS)",
-            "deadline": "Expected Deadline",
-            "status": "Project State",
-            "progress": "Stage Completion (%)"
-        }
+      "title": "Last Projects",
+      "archive": "Open archive",
+      "noDescription": "No description provided."
     },
-    "reports": {
-        "title": "Performance Analytics",
-        "subtitle": "Deep insights into your financial ecosystem",
-        "export": "Export PDF",
-        "regenerate": "Regenerate Report",
-        "start": "Start Period",
-        "end": "End Period",
-        "summary": "Financial Summary",
-        "revenue": "Gross Revenue",
-        "expenses": "Operating Expenses",
-        "net": "Net Operating Income",
-        "distribution": "Expense Distribution",
-        "breakdown": "Categorized Breakdown",
-        "noReport": "No report active",
-        "noReportSubtitle": "Configure your date range and click 'Regenerate Report' to view analytics.",
-        "department": "Department / Category",
-        "total": "Log Total",
-        "allocation": "Allocation"
+    "monthProgress": {
+      "title": "Month Progress",
+      "caption": "completed vs last month",
+      "overview": "Overview",
+      "download": "Download Report"
     },
-    "finance": {
-        "vaults": {
-            "title": "Digital Vaults",
-            "subtitle": "Secure management of your liquid assets and cashboxes",
-            "create": "Create Vault",
-            "totalAssets": "Total Liquid Assets",
-            "balance": "Current Balance",
-            "transfer": "Transfer Funds",
-            "modal": {
-                "title": "Create New Digital Vault",
-                "confirm": "Confirm Creation",
-                "decommissionConfirm": "Permanently decommission this vault? Funds must be moved manually."
-            },
-            "form": {
-                "name": "Vault Name",
-                "type": "Account Type",
-                "balance": "Initial Balance",
-                "color": "Theme Color",
-                "types": {
-                    "cash": "Cash / Physical",
-                    "card": "Digital / Card",
-                    "bank": "Bank Account"
-                }
-            }
-        },
-        "expenses": {
-            "title": "Expense Tracking",
-            "subtitle": "Monitor and categorize every transaction",
-            "add": "Log Expense",
-            "form": {
-                "amount": "Operation Amount",
-                "category": "Classification",
-                "cashbox": "Source Vault",
-                "date": "Transaction Date",
-                "description": "Justification / Notes"
-            },
-            "modal": {
-                "add": "Record New Expense",
-                "deleteConfirm": "Discard this expense record?"
-            }
-        }
+    "modal": {
+      "create": "Create",
+      "createTitle": "Create {type}",
+      "editTitle": "Edit {type}",
+      "fields": {
+        "title": "Title",
+        "when": "When",
+        "type": "Type",
+        "status": "Status",
+        "description": "Description"
+      },
+      "placeholders": {
+        "taskTitle": "e.g. Meet HR for project",
+        "projectTitle": "e.g. New investor dashboard",
+        "when": "Tonight / Next morning",
+        "description": "Short description..."
+      },
+      "options": {
+        "meeting": "Meeting",
+        "work": "Work",
+        "personal": "Personal"
+      }
     },
-    "integrations": {
-        "common": {
-            "online": "System Online",
-            "offline": "Gateway Offline",
-            "validate": "Validate Connection",
-            "save": "Save Credentials",
-            "ledger": "Recent Ledger",
-            "settled": "Settled",
-            "noLogs": "No recent synchronization logs found."
-        },
-        "click": {
-            "subtitle": "Premium payment gateway integration for seamless transactions"
-        },
-        "uyqur": {
-            "subtitle": "Synchronize mobile engagement and user growth metrics"
-        },
-        "monetary": {
-            "subtitle": "Market-grade exchange rates and multi-currency indexing"
-        }
-    },
-    "auth": {
-        "login": {
-            "title": "Welcome Back",
-            "subtitle": "Investor relations management portal",
-            "email": "Email Address",
-            "password": "Security Key",
-            "remember": "Remember device",
-            "forgot": "Recover Key",
-            "submit": "Authenticate",
-            "demo": "Demo Portal",
-            "error": {
-                "emailReq": "Email required",
-                "emailInvalid": "Invalid email address",
-                "passReq": "Key required",
-                "passMin": "Key must be at least 6 characters",
-                "denied": "Access denied. Unauthorized credentials."
-            }
-        },
-        "forgot": {
-            "title": "Recover Account",
-            "subtitle": "Reset your security credentials to regain access",
-            "back": "Back to Login",
-            "email": "Email Address",
-            "submit": "Send Code",
-            "sending": "Sending...",
-            "code": "Recovery Code",
-            "newPass": "New Password",
-            "confirmPass": "Confirm Password",
-            "change": "Change Password",
-            "changing": "Saving...",
-            "sent": "Recovery code sent to {email}",
-            "resend": "Resend Code",
-            "noCode": "Didn't receive code?",
-            "success": "Security parameters updated successfully",
-            "ready": "Password Changed",
-            "return": "Return to Login",
-            "error": {
-                "emailReq": "Email address required",
-                "emailInvalid": "Invalid email format",
-                "codeReq": "Recovery code required",
-                "passReq": "Password required",
-                "passMin": "Password must be at least 6 characters",
-                "mismatch": "Passwords do not match",
-                "invalidCode": "Invalid recovery protocol"
-            }
-        }
-    },
-    "system": {
-        "notFound": {
-            "title": "404 - Out of Bounds",
-            "subtitle": "The requested node does not exist in the current grid.",
-            "back": "Return to Grid"
-        },
-        "titles": {
-            "app": "Antigravity Investor",
-            "separator": "|"
-        }
+    "seed": {
+      "goals": {
+        "investorUpdate": "Investor update call",
+        "cashflowReview": "Cashflow review",
+        "expenseApproval": "Site expense approval",
+        "monitoring": "Batch monitoring"
+      },
+      "tasks": {
+        "meetFinance": "Meet finance lead",
+        "approvePayout": "Approve contractor payout"
+      },
+      "when": {
+        "tonight": "Tonight",
+        "nextMorning": "Next morning"
+      },
+      "projects": {
+        "rolloutTitle": "16-Lot rollout",
+        "rolloutDesc": "Mobile workflow and investor reporting improvements.",
+        "warehouseTitle": "Warehouse sync",
+        "warehouseDesc": "Inbound and outbound warehouse flow finalized.",
+        "capitalTitle": "Capital dashboard",
+        "capitalDesc": "Investor contribution overview ready."
+      }
     }
+  },
+  "investors": {
+    "title": "Investors Management",
+    "subtitle": "Manage and monitor your investor portfolio",
+    "add": "Add Investor",
+    "searchPlaceholder": "Search by name, email or phone...",
+    "allStatuses": "All Statuses",
+    "modal": {
+      "add": "Onboard New Investor",
+      "edit": "Edit Investor Details",
+      "register": "Register Investor",
+      "update": "Update Record",
+      "deleteConfirm": "Are you sure you want to remove this investor? This action cannot be undone."
+    },
+    "form": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "investment": "Initial Investment",
+      "status": "Portfolio Status"
+    }
+  },
+  "projects": {
+    "title": "Projects Portfolio",
+    "subtitle": "Track and manage your strategic initiatives",
+    "add": "New Project",
+    "searchPlaceholder": "Search projects...",
+    "empty": "No projects found matching your criteria",
+    "clearFilters": "Clear Filters",
+    "footerHint": "Click to manage project details",
+    "status": {
+      "inProgress": "In Progress",
+      "planning": "Planning",
+      "completed": "Completed"
+    },
+    "stats": {
+      "budget": "Budget",
+      "deadline": "Deadline",
+      "completion": "Completion"
+    },
+    "modal": {
+      "add": "Initialize New Project",
+      "edit": "Edit Project Details",
+      "create": "Initialize Project",
+      "update": "Apply Changes",
+      "deleteConfirm": "Are you sure you want to delete this project? Data will be lost forever."
+    },
+    "form": {
+      "name": "Project Name",
+      "description": "Project Overview",
+      "budget": "Total Budget (UZS)",
+      "deadline": "Expected Deadline",
+      "status": "Project State",
+      "progress": "Stage Completion (%)"
+    }
+  },
+  "reports": {
+    "title": "Performance Analytics",
+    "subtitle": "Deep insights into your financial ecosystem",
+    "export": "Export PDF",
+    "regenerate": "Regenerate Report",
+    "start": "Start Period",
+    "end": "End Period",
+    "summary": "Financial Summary",
+    "revenue": "Gross Revenue",
+    "expenses": "Operating Expenses",
+    "net": "Net Operating Income",
+    "distribution": "Expense Distribution",
+    "breakdown": "Categorized Breakdown",
+    "noReport": "No report active",
+    "noReportSubtitle": "Configure your date range and click 'Regenerate Report' to view analytics.",
+    "department": "Department / Category",
+    "total": "Log Total",
+    "allocation": "Allocation"
+  },
+  "finance": {
+    "vaults": {
+      "title": "Digital Vaults",
+      "subtitle": "Secure management of your liquid assets and cashboxes",
+      "create": "Create Vault",
+      "totalAssets": "Total Liquid Assets",
+      "balance": "Current Balance",
+      "transfer": "Transfer Funds",
+      "modal": {
+        "title": "Create New Digital Vault",
+        "confirm": "Confirm Creation",
+        "decommissionConfirm": "Permanently decommission this vault? Funds must be moved manually."
+      },
+      "form": {
+        "name": "Vault Name",
+        "type": "Account Type",
+        "balance": "Initial Balance",
+        "color": "Theme Color",
+        "types": {
+          "cash": "Cash / Physical",
+          "card": "Digital / Card",
+          "bank": "Bank Account"
+        }
+      }
+    },
+    "expenses": {
+      "title": "Expense Tracking",
+      "subtitle": "Monitor and categorize every transaction",
+      "add": "Log Expense",
+      "form": {
+        "amount": "Operation Amount",
+        "category": "Classification",
+        "cashbox": "Source Vault",
+        "date": "Transaction Date",
+        "description": "Justification / Notes"
+      },
+      "modal": {
+        "add": "Record New Expense",
+        "deleteConfirm": "Discard this expense record?"
+      }
+    }
+  },
+  "integrations": {
+    "common": {
+      "online": "System Online",
+      "offline": "Gateway Offline",
+      "validate": "Validate Connection",
+      "save": "Save Credentials",
+      "ledger": "Recent Ledger",
+      "settled": "Settled",
+      "noLogs": "No recent synchronization logs found."
+    },
+    "click": {
+      "subtitle": "Premium payment gateway integration for seamless transactions",
+      "title": "Click Uzbekistan"
+    },
+    "uyqur": {
+      "subtitle": "Synchronize mobile engagement and user growth metrics",
+      "title": "Uyqur App"
+    },
+    "monetary": {
+      "subtitle": "Market-grade exchange rates and multi-currency indexing",
+      "title": "Monetary"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Investor relations management portal",
+      "email": "Email Address",
+      "password": "Security Key",
+      "remember": "Remember device",
+      "forgot": "Recover Key",
+      "submit": "Authenticate",
+      "demo": "Demo Portal",
+      "error": {
+        "emailReq": "Email required",
+        "emailInvalid": "Invalid email address",
+        "passReq": "Key required",
+        "passMin": "Key must be at least 6 characters",
+        "denied": "Access denied. Unauthorized credentials."
+      }
+    },
+    "forgot": {
+      "title": "Recover Account",
+      "subtitle": "Reset your security credentials to regain access",
+      "back": "Back to Login",
+      "email": "Email Address",
+      "submit": "Send Code",
+      "sending": "Sending...",
+      "code": "Recovery Code",
+      "newPass": "New Password",
+      "confirmPass": "Confirm Password",
+      "change": "Change Password",
+      "changing": "Saving...",
+      "sent": "Recovery code sent to {email}",
+      "resend": "Resend Code",
+      "noCode": "Didn't receive code?",
+      "success": "Security parameters updated successfully",
+      "ready": "Password Changed",
+      "return": "Return to Login",
+      "error": {
+        "emailReq": "Email address required",
+        "emailInvalid": "Invalid email format",
+        "codeReq": "Recovery code required",
+        "passReq": "Password required",
+        "passMin": "Password must be at least 6 characters",
+        "mismatch": "Passwords do not match",
+        "invalidCode": "Invalid recovery protocol"
+      }
+    },
+    "footer": "Investor App. Built for consistent daily operations."
+  },
+  "system": {
+    "notFound": {
+      "title": "404 - Out of Bounds",
+      "subtitle": "The requested node does not exist in the current grid.",
+      "back": "Return to Grid",
+      "description": "The page you requested could not be found or may have been moved.",
+      "suggestions": "You may have been looking for one of these pages:"
+    },
+    "titles": {
+      "app": "Investor App",
+      "separator": "|"
+    },
+    "days": {
+      "short": {
+        "mon": "M",
+        "tue": "T",
+        "wed": "W",
+        "thu": "T",
+        "fri": "F",
+        "sat": "S",
+        "sun": "S"
+      },
+      "full": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      }
+    }
+  }
 }

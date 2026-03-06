@@ -6,7 +6,7 @@
           <th v-for="col in columns" :key="col.key" :style="{ width: col.width }">
             {{ col.label }}
           </th>
-          <th v-if="actions" class="actions-th">Actions</th>
+          <th v-if="actions" class="actions-th">{{ t('common.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -20,6 +20,7 @@
             </td>
           </tr>
         </template>
+
         <template v-else-if="data.length > 0">
           <tr v-for="(item, index) in data" :key="item.id || index">
             <td v-for="col in columns" :key="col.key">
@@ -28,14 +29,15 @@
               </slot>
             </td>
             <td v-if="actions" class="actions-td">
-              <slot name="actions" :item="item"></slot>
+              <slot name="actions" :item="item" />
             </td>
           </tr>
         </template>
+
         <tr v-else>
           <td :colspan="columns.length + (actions ? 1 : 0)" class="empty-cell">
             <div class="empty-state">
-              <p>No data found</p>
+              <p>{{ t('common.noData') }}</p>
             </div>
           </td>
         </tr>
@@ -46,6 +48,9 @@
 
 <script setup>
 import BaseSkeleton from './BaseSkeleton.vue'
+import { useI18n } from '@/composables/useI18n'
+
+const { t } = useI18n()
 
 defineProps({
   columns: { type: Array, required: true },
@@ -110,24 +115,4 @@ tr:hover td {
   color: var(--text-muted);
   font-style: italic;
 }
-
-.table-loading-overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--glass-bg);
-  display: grid;
-  place-items: center;
-  backdrop-filter: blur(2px);
-}
-
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--primary);
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
 </style>

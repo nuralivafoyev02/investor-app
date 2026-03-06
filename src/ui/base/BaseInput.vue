@@ -1,14 +1,18 @@
 <template>
-  <div class="input-group" :class="{ error: !!error }">
+  <div class="input-group" :class="{ error: !!error, 'has-prefix': !!$slots.prefix }">
     <label v-if="label" class="input-label">{{ label }}</label>
     <div class="input-wrapper">
+      <span v-if="$slots.prefix" class="prefix-slot">
+        <slot name="prefix" />
+      </span>
       <input
+        v-bind="inputAttrs"
         :value="modelValue"
-        @input="emit('update:modelValue', $event.target.value)"
         :type="type"
         :placeholder="placeholder"
-        class="base-input"
+        :class="['base-input', { 'with-prefix': !!$slots.prefix }]"
         :required="required"
+        @input="handleInput"
         @blur="emit('blur')"
       />
     </div>
@@ -17,7 +21,11 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed, useAttrs } from 'vue'
+
+defineOptions({ inheritAttrs: false })
+
+const props = defineProps({
   modelValue: [String, Number],
   label: String,
   type: { type: String, default: 'text' },
@@ -25,7 +33,17 @@ defineProps({
   error: String,
   required: Boolean
 })
+
 const emit = defineEmits(['update:modelValue', 'blur'])
+const attrs = useAttrs()
+
+const inputAttrs = computed(() => attrs)
+
+const handleInput = (event) => {
+  const { value } = event.target
+  const nextValue = props.type === 'number' ? (value === '' ? '' : Number(value)) : value
+  emit('update:modelValue', nextValue)
+}
 </script>
 
 <style scoped>
@@ -47,6 +65,17 @@ const emit = defineEmits(['update:modelValue', 'blur'])
   position: relative;
 }
 
+.prefix-slot {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  pointer-events: none;
+}
+
 .base-input {
   width: 100%;
   padding: 12px 16px;
@@ -57,6 +86,10 @@ const emit = defineEmits(['update:modelValue', 'blur'])
   font-weight: 600;
   color: var(--text-main);
   transition: var(--trans-fast);
+}
+
+.base-input.with-prefix {
+  padding-left: 42px;
 }
 
 .base-input:focus {

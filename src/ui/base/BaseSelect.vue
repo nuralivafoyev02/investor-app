@@ -2,11 +2,12 @@
   <div class="input-group">
     <label v-if="label" class="input-label">{{ label }}</label>
     <select
+      v-bind="selectAttrs"
       :value="modelValue"
-      @change="emit('update:modelValue', $event.target.value)"
       class="base-select"
+      @change="handleChange"
     >
-      <option v-if="placeholder" value="" disabled selected>{{ placeholder }}</option>
+      <option v-if="placeholder" value="">{{ placeholder }}</option>
       <option v-for="opt in options" :key="opt.value" :value="opt.value">
         {{ opt.label }}
       </option>
@@ -15,13 +16,24 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed, useAttrs } from 'vue'
+
+defineOptions({ inheritAttrs: false })
+
+const props = defineProps({
   modelValue: [String, Number],
-  options: { type: Array, required: true }, // { label, value }
+  options: { type: Array, required: true },
   label: String,
   placeholder: String
 })
+
 const emit = defineEmits(['update:modelValue'])
+const attrs = useAttrs()
+const selectAttrs = computed(() => attrs)
+
+const handleChange = (event) => {
+  emit('update:modelValue', event.target.value)
+}
 </script>
 
 <style scoped>
@@ -60,6 +72,6 @@ const emit = defineEmits(['update:modelValue'])
 .base-select:focus {
   outline: none;
   border-color: var(--secondary);
-  background: var(--bg-card);
+  background-color: var(--bg-card);
 }
 </style>

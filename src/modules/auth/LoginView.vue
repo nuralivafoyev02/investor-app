@@ -117,7 +117,7 @@ function validatePassword() {
 async function handleLogin() {
   errors.general = ''
 
-  if (!validateEmail() | !validatePassword()) return
+  if (!validateEmail() || !validatePassword()) return
 
   isLoading.value = true
 

@@ -1,29 +1,27 @@
-import { ref, watchEffect } from 'vue'
+import { computed } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
 
 export function useTheme() {
-    const settingsStore = useSettingsStore()
-    const theme = ref(settingsStore.settings.system.theme || 'light')
+  const settingsStore = useSettingsStore()
 
-    // Apply theme to document
-    const applyTheme = (newTheme) => {
-        document.documentElement.setAttribute('data-theme', newTheme)
-        theme.value = newTheme
+  const applyTheme = (newTheme) => {
+    const normalizedTheme = newTheme === 'dark' ? 'dark' : 'light'
+    document.documentElement.setAttribute('data-theme', normalizedTheme)
+    settingsStore.updateSystem({ theme: normalizedTheme })
+  }
 
-        // Sync with store
-        settingsStore.updateSystem({ theme: newTheme })
-    }
+  const theme = computed({
+    get: () => settingsStore.currentTheme,
+    set: (newTheme) => applyTheme(newTheme)
+  })
 
-    // Initial load logic is usually in main.js or App.vue for flash prevention
-    // but we can expose a toggle here
-    const toggleTheme = () => {
-        const nextTheme = theme.value === 'light' ? 'dark' : 'light'
-        applyTheme(nextTheme)
-    }
+  const toggleTheme = () => {
+    applyTheme(theme.value === 'light' ? 'dark' : 'light')
+  }
 
-    return {
-        theme,
-        toggleTheme,
-        applyTheme
-    }
+  return {
+    theme,
+    toggleTheme,
+    applyTheme
+  }
 }

@@ -5,7 +5,6 @@ export function useValidation() {
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       return regex.test(value) ? '' : 'Email noto\'g\'ri'
     },
-
     required: (value, label = 'Maydon') => {
       return value && String(value).trim() ? '' : `${label} talab qilinadi`
     },
