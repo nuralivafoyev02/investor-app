@@ -1,563 +1,325 @@
 <template>
-  <div class="page-container">
+  <div class="finance-page">
     <div class="page-header">
-      <div>
-        <h1 class="page-title">Kassalar</h1>
-        <p class="page-subtitle">{{ cashboxes.length }} ta kassa</p>
+      <div class="header-content">
+        <h1 class="page-title">{{ t('finance.vaults.title') }}</h1>
+        <p class="page-subtitle">{{ t('finance.vaults.subtitle') }}</p>
       </div>
-      <button @click="openAddModal" class="btn-primary">
-        <span>+</span> Yangi kassa
-      </button>
+      <BaseButton variant="primary" size="md" @click="openAddModal">
+        {{ t('finance.vaults.create') }}
+      </BaseButton>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Umumiy balans</div>
-        <div class="stat-value">{{ totalBalance.toLocaleString('uz-UZ') }} so'm</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Umumiy kirim</div>
-        <div class="stat-value income">{{ totalIncome.toLocaleString('uz-UZ') }} so'm</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Umumiy xarajat</div>
-        <div class="stat-value expense">{{ totalExpense.toLocaleString('uz-UZ') }} so'm</div>
+    <div class="vaults-summary">
+      <div class="summary-card glass premium-glow">
+        <span class="summary-label">{{ t('finance.vaults.totalAssets') }}</span>
+        <span class="summary-value">{{ formatCurrency(totalBalance) }}</span>
       </div>
     </div>
 
-    <div v-if="cashboxes.length === 0" class="empty-state">
-      <p>Kassalar topilmadi</p>
+    <div class="vaults-grid">
+      <template v-if="financeStore.loading">
+        <BaseCard v-for="i in 3" :key="`skeleton-${i}`" class="vault-card">
+          <div class="vault-body">
+            <BaseSkeleton width="70%" height="24px" class="mb-4" />
+            <BaseSkeleton width="40%" height="16px" class="mb-2" />
+            <BaseSkeleton width="100%" height="40px" type="button" />
+          </div>
+        </BaseCard>
+      </template>
+      <template v-else>
+        <BaseCard
+          v-for="vault in financeStore.cashboxes"
+          :key="vault.id"
+          class="vault-card"
+          :style="{ borderTop: `4px solid ${vault.color}` }"
+        >
+          <template #header>
+            <div class="vault-header">
+              <div class="vault-info">
+                <h3 class="vault-name">{{ vault.name }}</h3>
+                <BaseBadge :type="vault.type === 'Cash' ? 'info' : 'success'">{{ vault.type }}</BaseBadge>
+              </div>
+              <button class="delete-btn" @click="confirmDelete(vault.id)" :title="t('common.remove')">
+                <IconTrash class="icon-sm" />
+              </button>
+            </div>
+          </template>
+          
+          <div class="vault-body">
+            <div class="balance-display">
+              <span class="balance-label">{{ t('finance.vaults.balance') }}</span>
+              <span class="balance-amount">{{ formatCurrency(vault.balance) }}</span>
+            </div>
+            
+            <div class="vault-actions">
+              <BaseButton variant="secondary" size="sm" class="w-full">{{ t('finance.vaults.transfer') }}</BaseButton>
+            </div>
+          </div>
+        </BaseCard>
+      </template>
     </div>
 
-    <div v-else class="cashboxes-grid">
-      <div v-for="cashbox in cashboxes" :key="cashbox.id" class="cashbox-card">
-        <div class="card-header">
-          <div>
-            <h3 class="cashbox-name">{{ cashbox.name }}</h3>
-            <p class="cashbox-type">{{ getCashboxType(cashbox.type) }}</p>
-          </div>
-          <button @click="deleteCard(cashbox.id)" class="btn-menu">×</button>
+    <!-- Add Vault Modal -->
+    <DashboardModal
+      v-if="showModal"
+      :title="t('finance.vaults.modal.title')"
+      @close="closeModal"
+    >
+      <form @submit.prevent="handleSave" class="vault-form">
+        <div class="form-grid">
+          <BaseInput
+            v-model="formData.name"
+            :label="t('finance.vaults.form.name')"
+            placeholder="E.g. Main Reserve"
+            required
+            class="span-2"
+          />
+          <BaseSelect
+            v-model="formData.type"
+            :label="t('finance.vaults.form.type')"
+            :options="[
+              { label: t('finance.vaults.form.types.cash'), value: 'Cash' },
+              { label: t('finance.vaults.form.types.card'), value: 'Card' },
+              { label: t('finance.vaults.form.types.bank'), value: 'Bank' }
+            ]"
+          />
+          <BaseInput
+            v-model.number="formData.balance"
+            :label="t('finance.vaults.form.balance')"
+            type="number"
+            placeholder="0"
+            required
+          />
+          <BaseInput
+            v-model="formData.color"
+            :label="t('finance.vaults.form.color')"
+            type="color"
+          />
         </div>
-
-        <div class="balance-display">
-          <span class="label">Balans:</span>
-          <span class="amount">{{ cashbox.balance.toLocaleString('uz-UZ') }} so'm</span>
+        
+        <div class="modal-footer">
+          <BaseButton variant="ghost" @click="closeModal">{{ t('common.cancel') }}</BaseButton>
+          <BaseButton type="submit" variant="primary" :loading="isSaving">{{ t('finance.vaults.modal.confirm') }}</BaseButton>
         </div>
-
-        <div class="action-buttons">
-          <button @click="openTransaction(cashbox.id, 'income')" class="btn-action btn-income">
-            ⬇ Kirim
-          </button>
-          <button @click="openTransaction(cashbox.id, 'expense')" class="btn-action btn-expense">
-            ⬆ Xarajat
-          </button>
-        </div>
-
-        <div v-if="cashbox.transactions && cashbox.transactions.length > 0" class="transactions">
-          <div class="trans-header">So'ngi 3 ta operatsiya:</div>
-          <div v-for="trans in cashbox.transactions.slice(0, 3)" :key="trans.id" class="trans-item" :class="trans.type">
-            <span class="trans-desc">{{ trans.description }}</span>
-            <span class="trans-amount">{{ trans.type === 'income' ? '+' : '-' }}{{ trans.amount.toLocaleString('uz-UZ') }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal: Yangi kassa -->
-    <div v-if="showCashboxModal" @click.self="closeCashboxModal" class="modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2>Yangi kassa qo'shish</h2>
-          <button @click="closeCashboxModal" class="btn-close">×</button>
-        </div>
-        <form @submit.prevent="saveCashbox" class="form">
-          <div class="form-group">
-            <label>Kassa nomi</label>
-            <input v-model="newCashbox.name" type="text" required />
-          </div>
-          <div class="form-group">
-            <label>Turi</label>
-            <select v-model="newCashbox.type">
-              <option value="cash">Naqd pul</option>
-              <option value="bank">Bank hisob</option>
-              <option value="card">Karta</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Boshlang'ich balans</label>
-            <input v-model.number="newCashbox.balance" type="number" required />
-          </div>
-          <div class="modal-actions">
-            <button type="button" @click="closeCashboxModal" class="btn-secondary">Bekor qilish</button>
-            <button type="submit" class="btn-primary">Yaratish</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal: Operatsiya -->
-    <div v-if="showTransactionModal" @click.self="closeTransactionModal" class="modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2>{{ transactionType === 'income' ? 'Kirim' : 'Xarajat' }} qo'shish</h2>
-          <button @click="closeTransactionModal" class="btn-close">×</button>
-        </div>
-        <form @submit.prevent="saveTransaction" class="form">
-          <div class="form-group">
-            <label>Tavsifi</label>
-            <input v-model="newTransaction.description" type="text" required />
-          </div>
-          <div class="form-group">
-            <label>Miqdori (so'm)</label>
-            <input v-model.number="newTransaction.amount" type="number" required />
-          </div>
-          <div class="form-group">
-            <label>Sana</label>
-            <input v-model="newTransaction.date" type="date" required />
-          </div>
-          <div class="modal-actions">
-            <button type="button" @click="closeTransactionModal" class="btn-secondary">Bekor qilish</button>
-            <button type="submit" class="btn-primary">Saqlash</button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </DashboardModal>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useFinanceStore } from '@/stores/finance'
+import { useNotification } from '@/composables/useNotification'
+import { useI18n } from '@/composables/useI18n'
+const { t } = useI18n()
 
-const cashboxes = ref([
-  { id: '1', name: 'Asosiy kassa', type: 'cash', balance: 10000000, transactions: [] },
-  { id: '2', name: 'Bank hisob', type: 'bank', balance: 50000000, transactions: [] },
-  { id: '3', name: 'Visa karta', type: 'card', balance: 5000000, transactions: [] },
-])
+// Components
+import BaseButton from '@/ui/base/BaseButton.vue'
+import BaseInput from '@/ui/base/BaseInput.vue'
+import BaseSelect from '@/ui/base/BaseSelect.vue'
+import BaseCard from '@/ui/base/BaseCard.vue'
+import BaseBadge from '@/ui/base/BaseBadge.vue'
+import DashboardModal from '@/features/dashboard/DashboardModal.vue'
 
-const showCashboxModal = ref(false)
-const showTransactionModal = ref(false)
-const transactionType = ref('income')
-const selectedCashboxId = ref(null)
+// Icons
+import IconTrash from '@/ui/icons/IconTrash.vue'
 
-const newCashbox = reactive({
+const financeStore = useFinanceStore()
+const { success, error } = useNotification()
+
+const showModal = ref(false)
+const isSaving = ref(false)
+
+const formData = reactive({
   name: '',
-  type: 'cash',
+  type: 'Cash',
   balance: 0,
-})
-
-const newTransaction = reactive({
-  description: '',
-  amount: 0,
-  date: new Date().toISOString().split('T')[0],
+  color: '#6366f1',
 })
 
 const totalBalance = computed(() => {
-  return cashboxes.value.reduce((sum, cb) => sum + cb.balance, 0)
+  return financeStore.cashboxes.reduce((acc, curr) => acc + curr.balance, 0)
 })
 
-const totalIncome = computed(() => {
-  let total = 0
-  cashboxes.value.forEach(cb => {
-    if (cb.transactions) {
-      cb.transactions.forEach(trans => {
-        if (trans.type === 'income') total += trans.amount
-      })
-    }
-  })
-  return total
-})
-
-const totalExpense = computed(() => {
-  let total = 0
-  cashboxes.value.forEach(cb => {
-    if (cb.transactions) {
-      cb.transactions.forEach(trans => {
-        if (trans.type === 'expense') total += trans.amount
-      })
-    }
-  })
-  return total
-})
-
-function getCashboxType(type) {
-  const types = { cash: 'Naqd pul', bank: 'Bank hisob', card: 'Karta' }
-  return types[type] || type
+const formatCurrency = (val) => {
+  return new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', maximumFractionDigits: 0 }).format(val)
 }
 
-function openAddModal() {
-  newCashbox.name = ''
-  newCashbox.type = 'cash'
-  newCashbox.balance = 0
-  showCashboxModal.value = true
+const openAddModal = () => {
+  Object.assign(formData, { name: '', type: 'Cash', balance: 0, color: '#6366f1' })
+  showModal.value = true
 }
 
-function closeCashboxModal() {
-  showCashboxModal.value = false
+const closeModal = () => {
+  showModal.value = false
 }
 
-function saveCashbox() {
-  cashboxes.value.push({
-    id: 'cb_' + Date.now(),
-    ...newCashbox,
-    transactions: []
-  })
-  closeCashboxModal()
-}
-
-function deleteCard(id) {
-  cashboxes.value = cashboxes.value.filter(cb => cb.id !== id)
-}
-
-function openTransaction(cashboxId, type) {
-  selectedCashboxId.value = cashboxId
-  transactionType.value = type
-  newTransaction.description = ''
-  newTransaction.amount = 0
-  newTransaction.date = new Date().toISOString().split('T')[0]
-  showTransactionModal.value = true
-}
-
-function closeTransactionModal() {
-  showTransactionModal.value = false
-}
-
-function saveTransaction() {
-  const cashbox = cashboxes.value.find(cb => cb.id === selectedCashboxId.value)
-  if (!cashbox) return
-
-  if (!cashbox.transactions) cashbox.transactions = []
-
-  cashbox.transactions.unshift({
-    id: 'trans_' + Date.now(),
-    type: transactionType.value,
-    ...newTransaction
-  })
-
-  if (transactionType.value === 'income') {
-    cashbox.balance += newTransaction.amount
-  } else {
-    cashbox.balance -= newTransaction.amount
+const handleSave = async () => {
+  isSaving.value = true
+  try {
+    await financeStore.addCashbox({ ...formData })
+    success('New vault created successfully')
+    closeModal()
+  } catch (err) {
+    // Handled by service
+  } finally {
+    isSaving.value = false
   }
+}
 
-  closeTransactionModal()
+onMounted(() => {
+  financeStore.fetchCashboxes()
+})
+
+const confirmDelete = (id) => {
+  if (confirm(t('finance.vaults.modal.decommissionConfirm'))) {
+    financeStore.deleteCashbox(id)
+    success('Vault decommissioned')
+  }
 }
 </script>
 
 <style scoped>
-.page-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.finance-page {
+  padding: var(--space-xl);
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
+  margin-bottom: var(--space-xl);
 }
 
 .page-title {
-  font-size: 28px;
-  font-weight: 900;
-  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .page-subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: #666;
-}
-
-.btn-primary {
-  padding: 10px 16px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-primary:hover {
-  background: #333;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.stat-card {
-  padding: 16px;
-  background: #f9f9f9;
-  border-radius: 12px;
-  border: 1px solid #eee;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #666;
+  color: var(--text-muted);
   font-weight: 600;
-  margin-bottom: 8px;
 }
 
-.stat-value {
-  font-size: 20px;
+.vaults-summary {
+  margin-bottom: var(--space-xl);
+}
+
+.summary-card {
+  padding: var(--space-xl);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--grad-ambient);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+}
+
+.summary-label {
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.summary-value {
+  font-size: 44px;
   font-weight: 900;
-  color: #111;
+  letter-spacing: -0.03em;
 }
 
-.stat-value.income {
-  color: #22c55e;
-}
-
-.stat-value.expense {
-  color: #ef4444;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: #999;
-}
-
-.cashboxes-grid {
+.vaults-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  gap: var(--space-xl);
 }
 
-.cashbox-card {
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background: #fff;
-}
-
-.card-header {
+.vault-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 14px;
+  width: 100%;
 }
 
-.cashbox-name {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
+.vault-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.cashbox-type {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: #999;
+.vault-name {
+  font-size: 18px;
+  font-weight: 800;
 }
 
-.btn-menu {
-  background: none;
+.delete-btn {
+  background: transparent;
   border: none;
-  font-size: 20px;
+  color: var(--text-muted);
   cursor: pointer;
-  color: #999;
+  opacity: 0.4;
+  transition: var(--trans-fast);
+}
+
+.delete-btn:hover {
+  opacity: 1;
+  color: var(--danger);
 }
 
 .balance-display {
+  padding: var(--space-lg) 0;
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 12px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  margin-bottom: 12px;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.balance-display .label {
-  font-size: 12px;
-  color: #666;
-  font-weight: 600;
-}
-
-.balance-display .amount {
-  font-size: 18px;
-  font-weight: 900;
-  color: #111;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.btn-action {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-  font-size: 12px;
+.balance-label {
+  font-size: 11px;
   font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
+  color: var(--text-muted);
+  text-transform: uppercase;
 }
 
-.btn-income {
-  background: #d1f5e0;
-  color: #15803d;
-}
-
-.btn-income:hover {
-  background: #bbf0d8;
-}
-
-.btn-expense {
-  background: #ffe5e5;
-  color: #b42318;
-}
-
-.btn-expense:hover {
-  background: #ffcccc;
-}
-
-.transactions {
-  padding-top: 12px;
-  border-top: 1px solid #eee;
-  font-size: 12px;
-}
-
-.trans-header {
-  font-weight: 700;
-  color: #666;
-  margin-bottom: 8px;
-}
-
-.trans-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  color: #666;
-}
-
-.trans-item.income {
-  color: #22c55e;
-}
-
-.trans-item.expense {
-  color: #ef4444;
-}
-
-.trans-amount {
-  font-weight: 700;
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: grid;
-  place-items: center;
-  z-index: 999;
-}
-
-.modal-card {
-  background: #fff;
-  border-radius: 12px;
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.btn-close {
-  background: none;
-  border: none;
+.balance-amount {
   font-size: 24px;
-  cursor: pointer;
-  color: #666;
+  font-weight: 800;
+  color: var(--text-main);
 }
 
-.form {
-  padding: 20px;
+.vault-form {
+  padding: var(--space-lg);
 }
 
-.form-group {
-  margin-bottom: 16px;
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 700;
-  font-size: 12px;
-  color: #333;
+.span-2 {
+  grid-column: span 2;
 }
 
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #111;
-}
-
-.modal-actions {
+.modal-footer {
   display: flex;
-  gap: 10px;
   justify-content: flex-end;
-  padding-top: 10px;
-}
-
-.btn-secondary {
-  padding: 10px 16px;
-  background: #f5f5f5;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
 }
 
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
-    gap: 16px;
+    align-items: flex-start;
+    gap: var(--space-lg);
   }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .cashboxes-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-card {
-    width: 95%;
+  
+  .summary-value {
+    font-size: 32px;
   }
 }
 </style>

@@ -1,121 +1,170 @@
 <template>
-  <div class="page-container">
+  <div class="investors-page">
     <div class="page-header">
-      <div>
-        <h1 class="page-title">Investorlar</h1>
-        <p class="page-subtitle">{{ investors.length }} ta investor</p>
+      <div class="header-content">
+        <h1 class="page-title">{{ t('investors.title') }}</h1>
+        <p class="page-subtitle">{{ t('investors.subtitle') }}</p>
       </div>
-      <button @click="openAddModal" class="btn-primary">
-        <span>+</span> Yangi investor
-      </button>
+      <BaseButton variant="primary" size="md" @click="openAddModal">
+        {{ t('investors.add') }}
+      </BaseButton>
     </div>
 
-    <div class="filters">
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Qidiruv..."
-        class="search-input"
-      />
-      <select v-model="filterStatus" class="filter-select">
-        <option value="">Barcha statuslar</option>
-        <option value="active">Faol</option>
-        <option value="inactive">Nofaol</option>
-      </select>
-    </div>
-
-    <div v-if="filteredInvestors.length === 0" class="empty-state">
-      <p>Investorlar topilmadi</p>
-    </div>
-
-    <div v-else class="investors-grid">
-      <div v-for="investor in filteredInvestors" :key="investor.id" class="investor-card">
-        <div class="card-header">
-          <div class="investor-name">{{ investor.name }}</div>
-          <button @click="openMenu($event, investor.id)" class="btn-menu">⋮</button>
-          <div v-if="activeMenu === investor.id" class="menu-popup">
-            <button @click="openEditModal(investor)">Tahrirlash</button>
-            <button @click="deleteInvestor(investor.id)" class="btn-danger">O'chirish</button>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="info-row">
-            <span class="label">Email:</span>
-            <span class="value">{{ investor.email }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Telefon:</span>
-            <span class="value">{{ investor.phone }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Investitsiya:</span>
-            <span class="value amount">{{ investor.amount }} so'm</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Status:</span>
-            <span class="badge" :class="investor.status">
-              {{ investor.status === 'active' ? 'Faol' : 'Nofaol' }}
-            </span>
-          </div>
-        </div>
+    <div class="filters-bar glass">
+      <div class="search-box">
+        <BaseInput
+          v-model="searchQuery"
+          :placeholder="t('investors.searchPlaceholder')"
+          class="search-input"
+        >
+          <template #prefix>
+            <IconSearch class="icon-sm" />
+          </template>
+        </BaseInput>
+      </div>
+      <div class="filter-actions">
+        <BaseSelect
+          v-model="filterStatus"
+          :options="[
+            { label: t('investors.allStatuses'), value: '' },
+            { label: t('common.active'), value: 'active' },
+            { label: t('common.inactive'), value: 'inactive' }
+          ]"
+          class="status-select"
+        />
       </div>
     </div>
 
-    <!-- Modal -->
-    <div v-if="showModal" @click.self="closeModal" class="modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2>{{ editingId ? 'Investorni tahrirlash' : 'Yangi investor qo\'shish' }}</h2>
-          <button @click="closeModal" class="btn-close">×</button>
+    <BaseTable
+      ref="investorTable"
+      :columns="columns"
+      :data="filteredInvestors"
+      :loading="investorStore.loading"
+      actions
+    >
+      <template #cell-name="{ item }">
+        <div class="investor-identity">
+          <div class="avatar-mini">{{ item.name.charAt(0) }}</div>
+          <div class="identity-info">
+            <span class="name">{{ item.name }}</span>
+            <span class="email">{{ item.email }}</span>
+          </div>
         </div>
-        <form @submit.prevent="saveInvestor" class="form">
-          <div class="form-group">
-            <label>Ism Familiya</label>
-            <input v-model="formData.name" type="text" required />
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input v-model="formData.email" type="email" required />
-          </div>
-          <div class="form-group">
-            <label>Telefon</label>
-            <input v-model="formData.phone" type="tel" required />
-          </div>
-          <div class="form-group">
-            <label>Investitsiya miqdori (so'm)</label>
-            <input v-model.number="formData.amount" type="number" required />
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select v-model="formData.status">
-              <option value="active">Faol</option>
-              <option value="inactive">Nofaol</option>
-            </select>
-          </div>
-          <div class="modal-actions">
-            <button type="button" @click="closeModal" class="btn-secondary">Bekor qilish</button>
-            <button type="submit" class="btn-primary">Saqlash</button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </template>
+
+      <template #cell-amount="{ val }">
+        <span class="amount-cell">{{ formatCurrency(val) }}</span>
+      </template>
+
+      <template #cell-status="{ val }">
+        <BaseBadge :type="val === 'active' ? 'success' : 'error'">
+          {{ val }}
+        </BaseBadge>
+      </template>
+
+      <template #actions="{ item }">
+        <div class="row-actions">
+          <button class="action-btn edit" @click="openEditModal(item)" :title="t('common.edit')">
+            <IconEdit />
+          </button>
+          <button class="action-btn delete" @click="confirmDelete(item.id)" :title="t('common.delete')">
+            <IconTrash />
+          </button>
+        </div>
+      </template>
+    </BaseTable>
+
+    <!-- Investor Modal -->
+    <DashboardModal
+      v-if="showModal"
+      :title="editingId ? t('investors.modal.edit') : t('investors.modal.add')"
+      @close="closeModal"
+    >
+      <form @submit.prevent="handleSave" class="investor-form">
+        <div class="form-grid">
+          <BaseInput
+            v-model="formData.name"
+            :label="t('investors.form.name')"
+            placeholder="John Doe"
+            required
+          />
+          <BaseInput
+            v-model="formData.email"
+            :label="t('investors.form.email')"
+            type="email"
+            placeholder="john@example.com"
+            required
+          />
+          <BaseInput
+            v-model="formData.phone"
+            :label="t('investors.form.phone')"
+            placeholder="+998 90 ..."
+            required
+          />
+          <BaseInput
+            v-model.number="formData.amount"
+            :label="t('investors.form.investment')"
+            type="number"
+            placeholder="0"
+            required
+          />
+          <BaseSelect
+            v-model="formData.status"
+            :label="t('investors.form.status')"
+            :options="[
+              { label: t('common.active'), value: 'active' },
+              { label: t('common.inactive'), value: 'inactive' }
+            ]"
+          />
+        </div>
+        
+        <div class="modal-footer">
+          <BaseButton variant="ghost" @click="closeModal">{{ t('common.cancel') }}</BaseButton>
+          <BaseButton type="submit" variant="primary" :loading="isSaving">
+            {{ editingId ? t('investors.modal.update') : t('investors.modal.register') }}
+          </BaseButton>
+        </div>
+      </form>
+    </DashboardModal>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
+import { useInvestorStore } from '@/stores/investors'
+import { useNotification } from '@/composables/useNotification'
 
-const investors = ref([
-  { id: '1', name: 'Ahmad Karim', email: 'ahmad@example.com', phone: '+998901234567', amount: 5000000, status: 'active' },
-  { id: '2', name: 'Fatima Ahmadova', email: 'fatima@example.com', phone: '+998901234568', amount: 3000000, status: 'active' },
-  { id: '3', name: 'Alisher Navoi', email: 'alisher@example.com', phone: '+998901234569', amount: 10000000, status: 'inactive' },
-])
+// Components
+import BaseButton from '@/ui/base/BaseButton.vue'
+import BaseInput from '@/ui/base/BaseInput.vue'
+import BaseSelect from '@/ui/base/BaseSelect.vue'
+import BaseTable from '@/ui/base/BaseTable.vue'
+import BaseBadge from '@/ui/base/BaseBadge.vue'
+import DashboardModal from '@/features/dashboard/DashboardModal.vue'
 
-const showModal = ref(false)
-const editingId = ref(null)
+// Icons
+import IconSearch from '@/ui/icons/IconSearch.vue'
+import IconEdit from '@/ui/icons/IconEdit.vue'
+import IconTrash from '@/ui/icons/IconTrash.vue'
+
+const investorStore = useInvestorStore()
+const { success, error } = useNotification()
+import { useI18n } from '@/composables/useI18n'
+const { t } = useI18n()
+import { onMounted } from 'vue'
+
+const columns = [
+  { key: 'name', label: t('common.investor'), width: '30%' },
+  { key: 'phone', label: t('common.phone'), width: '20%' },
+  { key: 'amount', label: t('common.capital'), width: '20%' },
+  { key: 'status', label: t('common.status'), width: '15%' },
+]
+
 const searchQuery = ref('')
 const filterStatus = ref('')
-const activeMenu = ref(null)
+const showModal = ref(false)
+const editingId = ref(null)
+const isSaving = ref(false)
 
 const formData = reactive({
   name: '',
@@ -126,356 +175,209 @@ const formData = reactive({
 })
 
 const filteredInvestors = computed(() => {
-  return investors.value.filter(investor => {
-    const matchSearch = investor.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                       investor.email.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchStatus = filterStatus.value === '' || investor.status === filterStatus.value
-    return matchSearch && matchStatus
+  return investorStore.investors.filter(i => {
+    const matchesSearch = i.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                         i.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                         i.phone.includes(searchQuery.value)
+    const matchesStatus = !filterStatus.value || i.status === filterStatus.value
+    return matchesSearch && matchesStatus
   })
 })
 
-function openAddModal() {
+const formatCurrency = (val) => {
+  return new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', maximumFractionDigits: 0 }).format(val)
+}
+
+const openAddModal = () => {
   editingId.value = null
-  formData.name = ''
-  formData.email = ''
-  formData.phone = ''
-  formData.amount = 0
-  formData.status = 'active'
+  Object.assign(formData, { name: '', email: '', phone: '', amount: 0, status: 'active' })
   showModal.value = true
 }
 
-function openEditModal(investor) {
-  editingId.value = investor.id
-  formData.name = investor.name
-  formData.email = investor.email
-  formData.phone = investor.phone
-  formData.amount = investor.amount
-  formData.status = investor.status
+const openEditModal = (item) => {
+  editingId.value = item.id
+  Object.assign(formData, { ...item })
   showModal.value = true
-  activeMenu.value = null
 }
 
-function closeModal() {
+const closeModal = () => {
   showModal.value = false
 }
 
-function saveInvestor() {
-  if (editingId.value) {
-    const index = investors.value.findIndex(i => i.id === editingId.value)
-    if (index !== -1) {
-      investors.value[index] = { ...formData, id: editingId.value }
+const handleSave = async () => {
+  isSaving.value = true
+  try {
+    if (editingId.value) {
+      await investorStore.updateInvestor(editingId.value, { ...formData })
+      success('Investor profile updated successfully')
+    } else {
+      await investorStore.addInvestor({ ...formData })
+      success('New investor onboarded successfully')
     }
-  } else {
-    investors.value.push({
-      id: 'inv_' + Date.now(),
-      ...formData,
-    })
+    closeModal()
+  } catch (err) {
+    // Error is handled by service + useApi
+  } finally {
+    isSaving.value = false
   }
-  closeModal()
 }
 
-function deleteInvestor(id) {
-  investors.value = investors.value.filter(i => i.id !== id)
-  activeMenu.value = null
-}
+onMounted(() => {
+  investorStore.fetchInvestors()
+})
 
-function openMenu(event, id) {
-  event.stopPropagation()
-  activeMenu.value = activeMenu.value === id ? null : id
+const confirmDelete = (id) => {
+  if (confirm(t('investors.modal.deleteConfirm'))) {
+    investorStore.deleteInvestor(id)
+    success('Investor removed from portfolio')
+  }
 }
 </script>
 
 <style scoped>
-.page-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.investors-page {
+  padding: var(--space-xl);
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
+  margin-bottom: var(--space-xl);
 }
 
 .page-title {
-  font-size: 28px;
-  font-weight: 900;
-  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
 }
 
 .page-subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: #666;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
-.btn-primary {
-  padding: 10px 16px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
+.filters-bar {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  align-items: flex-end;
 }
 
-.btn-primary:hover {
-  background: #333;
-}
-
-.filters {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.search-input,
-.filter-select {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-}
-
-.search-input {
+.search-box {
   flex: 1;
 }
 
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: #999;
+.status-select {
+  width: 200px;
 }
 
-.investors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
-}
-
-.investor-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 16px;
-  background: #fff;
-  transition: all 0.2s;
-}
-
-.investor-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
+.investor-identity {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  position: relative;
+  align-items: center;
+  gap: 12px;
 }
 
-.investor-name {
-  font-weight: 700;
-  font-size: 15px;
-}
-
-.btn-menu {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: #666;
-}
-
-.menu-popup {
-  position: absolute;
-  right: 0;
-  top: 24px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  min-width: 140px;
-}
-
-.menu-popup button {
-  width: 100%;
-  text-align: left;
-  padding: 10px 12px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  color: #111;
-}
-
-.menu-popup button:hover {
-  background: #f5f5f5;
-}
-
-.btn-danger {
-  color: #b42318 !important;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-}
-
-.label {
-  color: #666;
-  font-weight: 600;
-}
-
-.value {
-  color: #111;
-  font-weight: 700;
-}
-
-.amount {
-  color: #22c55e;
-}
-
-.badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  background: #f0f0f0;
-}
-
-.badge.active {
-  background: #d1f5e0;
-  color: #15803d;
-}
-
-.badge.inactive {
-  background: #ffe5e5;
-  color: #b42318;
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+.avatar-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-main);
+  color: var(--primary);
   display: grid;
   place-items: center;
-  z-index: 999;
+  font-weight: 800;
+  font-size: 14px;
+  border: 1px solid var(--border-light);
 }
 
-.modal-card {
-  background: #fff;
-  border-radius: 12px;
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
+.identity-info {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
+  flex-direction: column;
 }
 
-.modal-header h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-}
-
-.form {
-  padding: 20px;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
+.name {
   font-weight: 700;
+  color: var(--text-main);
+}
+
+.email {
   font-size: 12px;
-  color: #333;
+  color: var(--text-muted);
 }
 
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
+.amount-cell {
+  font-weight: 800;
+  color: var(--success);
 }
 
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #111;
-}
-
-.modal-actions {
+.row-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: flex-end;
-  padding-top: 10px;
 }
 
-.btn-secondary {
-  padding: 10px 16px;
-  background: #f5f5f5;
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
   border: none;
-  border-radius: 8px;
+  background: var(--bg-main);
+  color: var(--text-muted);
   cursor: pointer;
-  font-weight: 600;
+  display: grid;
+  place-items: center;
+  transition: var(--trans-fast);
+}
+
+.action-btn:hover {
+  background: var(--bg-surface-high);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.action-btn.delete:hover {
+  color: var(--danger);
+}
+
+.investor-form {
+  padding: var(--space-lg);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
 }
 
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
-    gap: 16px;
+    align-items: flex-start;
+    gap: var(--space-lg);
   }
-
-  .filters {
+  
+  .filters-bar {
     flex-direction: column;
   }
-
-  .filter-select {
+  
+  .status-select {
     width: 100%;
   }
-
-  .investors-grid {
+  
+  .form-grid {
     grid-template-columns: 1fr;
-  }
-
-  .modal-card {
-    width: 95%;
   }
 }
 </style>

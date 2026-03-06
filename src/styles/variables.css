@@ -1,0 +1,99 @@
+:root {
+  /* Core Colors */
+  --primary: #0f172a;
+  --primary-hover: #1e293b;
+  --secondary: #6366f1;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  /* Semantic Tokens - Light (Default) */
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-soft: #f1f5f9;
+  --bg-surface-high: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-on-primary: #ffffff;
+  --border-light: rgba(0, 0, 0, 0.06);
+  --border-subtle: rgba(0, 0, 0, 0.04);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --shadow-color: rgba(0, 0, 0, 0.08);
+
+  /* Status Tokens - Light */
+  --success-bg: #ecfdf5;
+  --success-text: #065f46;
+  --warning-bg: #fffbeb;
+  --warning-text: #92400e;
+  --danger-bg: #fef2f2;
+  --danger-text: #991b1b;
+  --info-bg: #eff6ff;
+  --info-text: #1e40af;
+
+  /* Gradients */
+  --grad-ambient: radial-gradient(800px 500px at 20% 10%, rgba(255, 255, 255, 0.45), transparent 55%),
+    radial-gradient(700px 420px at 85% 25%, rgba(255, 255, 255, 0.35), transparent 60%),
+    radial-gradient(700px 500px at 50% 90%, rgba(255, 255, 255, 0.25), transparent 60%);
+}
+
+[data-theme="dark"] {
+  --primary: #ffffff;
+  --primary-hover: #f1f5f9;
+  --secondary: #818cf8;
+
+  --bg-main: #020617;
+  --bg-card: #0f172a;
+  --bg-soft: #1e293b;
+  --bg-surface-high: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-on-primary: #0f172a;
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+
+  /* Status Tokens - Dark */
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --success-text: #34d399;
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --warning-text: #fbbf24;
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --danger-text: #f87171;
+  --info-bg: rgba(59, 130, 246, 0.1);
+  --info-text: #60a5fa;
+
+  --grad-ambient: radial-gradient(800px 500px at 20% 10%, rgba(15, 23, 42, 0.45), transparent 55%),
+    radial-gradient(700px 420px at 85% 25%, rgba(15, 23, 42, 0.35), transparent 60%),
+    radial-gradient(700px 500px at 50% 90%, rgba(15, 23, 42, 0.25), transparent 60%);
+}
+
+:root {
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 3px 0 var(--shadow-color);
+  --shadow-md: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -2px var(--shadow-color);
+  --shadow-lg: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -4px var(--shadow-color);
+  --shadow-premium: 0 24px 70px var(--shadow-color);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --trans-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --trans-medium: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

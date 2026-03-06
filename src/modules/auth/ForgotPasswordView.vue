@@ -1,106 +1,107 @@
 <template>
   <div class="forgot-password">
     <RouterLink to="/auth/login" class="back-link">
-      <span>&larr;</span> Orqaga
+      <span>&larr;</span> {{ t('auth.forgot.back') }}
     </RouterLink>
 
     <div class="header-section">
-      <h1 class="title">Parolni tiklash</h1>
-      <p class="description">Hisobingizga kirish uchun parolingizni tiklang</p>
+      <h1 class="title">{{ t('auth.forgot.title') }}</h1>
+      <p class="description">{{ t('auth.forgot.subtitle') }}</p>
     </div>
 
     <div v-if="!resetSent" class="reset-form">
       <form @submit.prevent="sendResetCode" class="form">
-        <div class="form-group">
-          <label for="reset-email">Email manzili</label>
-          <input
-            id="reset-email"
-            v-model.trim="resetEmail"
-            type="email"
-            placeholder="admin@example.com"
-            required
-            @blur="validateResetEmail"
-            class="form-input"
-            :class="{ 'error': emailError }"
-          />
-          <span v-if="emailError" class="error-message">{{ emailError }}</span>
-        </div>
+        <BaseInput
+          v-model="resetEmail"
+          type="email"
+          :label="t('auth.forgot.email')"
+          placeholder="admin@example.com"
+          :error="emailError"
+          @blur="validateResetEmail"
+          required
+        />
 
-        <button type="submit" class="btn-primary" :disabled="isLoading">
-          <span v-if="isLoading" class="spinner"></span>
-          {{ isLoading ? 'Yuborilmoqda...' : 'Kod yuborish' }}
-        </button>
+        <BaseButton 
+          type="submit" 
+          variant="primary" 
+          size="lg" 
+          :loading="isLoading"
+        >
+          {{ t('auth.forgot.submit') }}
+        </BaseButton>
 
-        <div v-if="generalError" class="alert alert-error">
-          {{ generalError }}
-        </div>
+        <transition name="fade">
+          <BaseAlert v-if="generalError" type="error">
+            {{ generalError }}
+          </BaseAlert>
+        </transition>
       </form>
     </div>
 
     <div v-else-if="!passwordChanged" class="reset-form">
-      <div class="success-message">
-        ✓ Tiklash kodi {{ resetEmail }} manziliga yuborildi
-      </div>
+      <BaseAlert type="success" class="mb-lg">
+        {{ t('auth.forgot.sent', { email: resetEmail }) }}
+      </BaseAlert>
 
       <form @submit.prevent="resetPassword" class="form">
-        <div class="form-group">
-          <label for="reset-code">Tiklash kodi</label>
-          <input
-            id="reset-code"
-            v-model="resetCode"
-            type="text"
-            placeholder="123456"
-            maxlength="6"
-            required
-            class="form-input"
-          />
-        </div>
+        <BaseInput
+          v-model="resetCode"
+          type="text"
+          :label="t('auth.forgot.code')"
+          placeholder="123456"
+          maxlength="6"
+          required
+        />
 
-        <div class="form-group">
-          <label for="new-password">Yangi parol</label>
-          <input
-            id="new-password"
-            v-model="newPassword"
-            type="password"
-            placeholder="••••••••"
-            required
-            @blur="validateNewPassword"
-            class="form-input"
-            :class="{ 'error': passwordError }"
-          />
-          <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
-        </div>
+        <BaseInput
+          v-model="newPassword"
+          type="password"
+          :label="t('auth.forgot.newPass')"
+          placeholder="••••••••"
+          :error="passwordError"
+          @blur="validateNewPassword"
+          required
+        />
 
-        <div class="form-group">
-          <label for="confirm-password">Parolni tasdiqlash</label>
-          <input
-            id="confirm-password"
-            v-model="confirmPassword"
-            type="password"
-            placeholder="••••••••"
-            required
-            class="form-input"
-            :class="{ 'error': confirmError }"
-          />
-          <span v-if="confirmError" class="error-message">{{ confirmError }}</span>
-        </div>
+        <BaseInput
+          v-model="confirmPassword"
+          type="password"
+          :label="t('auth.forgot.confirmPass')"
+          placeholder="••••••••"
+          :error="confirmError"
+          @blur="validateConfirmPassword"
+          required
+        />
 
-        <button type="submit" class="btn-primary" :disabled="isLoading">
-          <span v-if="isLoading" class="spinner"></span>
-          {{ isLoading ? 'Saqlanmoqda...' : 'Parolni o\'zgartirish' }}
-        </button>
+        <BaseButton 
+          type="submit" 
+          variant="primary" 
+          size="lg" 
+          :loading="isLoading"
+        >
+          {{ t('auth.forgot.change') }}
+        </BaseButton>
+        
+        <transition name="fade">
+          <BaseAlert v-if="generalError" type="error">
+            {{ generalError }}
+          </BaseAlert>
+        </transition>
       </form>
 
       <p class="resend-hint">
-        Kod olmadingizmi? <button @click="resendCode" class="resend-btn">Qayta yuborish</button>
+        {{ t('auth.forgot.noCode') }} 
+        <button @click="resendCode" class="resend-btn">{{ t('auth.forgot.resend') }}</button>
       </p>
     </div>
 
     <div v-else class="success-section">
       <div class="check-icon">✓</div>
-      <h2>Parol o'zgartirildi</h2>
-      <p>Parolingiz muvaffaqiyatli o'zgartirildi</p>
-      <RouterLink to="/auth/login" class="btn-primary">Kirish sahifasiga qaytish</RouterLink>
+      <h2>{{ t('auth.forgot.ready') }}</h2>
+      <p>{{ t('auth.forgot.success') }}</p>
+      <RouterLink to="/auth/login" class="btn-primary-link">
+        {{ t('auth.forgot.return') }}
+      </RouterLink>
     </div>
   </div>
 </template>
@@ -108,6 +109,12 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { ref } from 'vue'
+import { useI18n } from '@/composables/useI18n'
+import BaseButton from '@/ui/base/BaseButton.vue'
+import BaseInput from '@/ui/base/BaseInput.vue'
+import BaseAlert from '@/ui/base/BaseAlert.vue'
+
+const { t } = useI18n()
 
 const resetEmail = ref('')
 const resetCode = ref('')
@@ -125,12 +132,12 @@ const generalError = ref('')
 function validateResetEmail() {
   const email = resetEmail.value.trim()
   if (!email) {
-    emailError.value = 'Email manzili talab qilinadi'
+    emailError.value = t('auth.forgot.error.emailReq')
     return false
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {
-    emailError.value = 'Email manzili noto\'g\'ri'
+    emailError.value = t('auth.forgot.error.emailInvalid')
     return false
   }
   emailError.value = ''
@@ -139,11 +146,11 @@ function validateResetEmail() {
 
 function validateNewPassword() {
   if (!newPassword.value) {
-    passwordError.value = 'Parol talab qilinadi'
+    passwordError.value = t('auth.forgot.error.passReq')
     return false
   }
   if (newPassword.value.length < 6) {
-    passwordError.value = 'Parol kamita 6 ta belgidan iborat bo\'lishi kerak'
+    passwordError.value = t('auth.forgot.error.passMin')
     return false
   }
   passwordError.value = ''
@@ -152,7 +159,7 @@ function validateNewPassword() {
 
 function validateConfirmPassword() {
   if (newPassword.value !== confirmPassword.value) {
-    confirmError.value = 'Parollar mos kelmadi'
+    confirmError.value = t('auth.forgot.error.mismatch')
     return false
   }
   confirmError.value = ''
@@ -161,40 +168,30 @@ function validateConfirmPassword() {
 
 async function sendResetCode() {
   generalError.value = ''
-
-  if (!validateResetEmail()) {
-    return
-  }
+  if (!validateResetEmail()) return
 
   isLoading.value = true
   await new Promise(resolve => setTimeout(resolve, 800))
-
   resetSent.value = true
   isLoading.value = false
 }
 
 async function resetPassword() {
   generalError.value = ''
-
   if (!resetCode.value) {
-    generalError.value = 'Tiklash kodi talab qilinadi'
+    generalError.value = t('auth.forgot.error.codeReq')
     return
   }
-
-  if (!validateNewPassword() || !validateConfirmPassword()) {
-    return
-  }
+  if (!validateNewPassword() || !validateConfirmPassword()) return
 
   isLoading.value = true
   await new Promise(resolve => setTimeout(resolve, 800))
 
-  // Simulate API call
   if (resetCode.value === '123456') {
     passwordChanged.value = true
   } else {
-    generalError.value = 'Noto\'g\'ri kod'
+    generalError.value = t('auth.forgot.error.invalidCode')
   }
-
   isLoading.value = false
 }
 
@@ -210,24 +207,24 @@ async function resendCode() {
 .forgot-password {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-xl);
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: #111;
+  gap: 8px;
+  color: var(--text-main);
   text-decoration: none;
   font-weight: 700;
   font-size: 13px;
   width: fit-content;
-  transition: all 0.2s ease;
+  transition: var(--trans-fast);
 }
 
 .back-link:hover {
-  color: #666;
-  transform: translateX(-3px);
+  color: var(--primary);
+  transform: translateX(-4px);
 }
 
 .header-section {
@@ -235,208 +232,89 @@ async function resendCode() {
 }
 
 .title {
-  font-size: 24px;
-  font-weight: 900;
-  color: #111;
-  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
 }
 
 .description {
-  font-size: 13px;
-  color: #666;
-  margin: 0;
-  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .reset-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--space-lg);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
-  font-weight: 700;
-  font-size: 12px;
-  color: #333;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.form-input {
-  padding: 12px 14px;
-  border: 1.5px solid #ddd;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #111;
-  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
-}
-
-.form-input.error {
-  border-color: #b42318;
-}
-
-.error-message {
-  font-size: 12px;
-  color: #b42318;
-  font-weight: 600;
-}
-
-.btn-primary {
-  padding: 12px 16px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  text-decoration: none;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #333;
-  transform: translateY(-1px);
-}
-
-.btn-primary:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.alert {
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.alert-error {
-  background: rgba(180, 35, 24, 0.1);
-  color: #b42318;
-  border: 1px solid rgba(180, 35, 24, 0.2);
-}
-
-.success-message {
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: rgba(34, 197, 94, 0.1);
-  color: #15803d;
-  border: 1px solid rgba(34, 197, 94, 0.2);
-  font-weight: 600;
-  font-size: 13px;
-  text-align: center;
+  gap: var(--space-lg);
 }
 
 .resend-hint {
   text-align: center;
   font-size: 13px;
-  color: #666;
-  margin: 0;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .resend-btn {
   background: none;
   border: none;
-  color: #111;
-  font-weight: 700;
+  color: var(--primary);
+  font-weight: 800;
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
   font: inherit;
 }
 
-.resend-btn:hover {
-  color: #666;
-}
-
 .success-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-xl);
   text-align: center;
-  padding: 24px 0;
 }
 
 .check-icon {
-  width: 60px;
-  height: 60px;
-  background: rgba(34, 197, 94, 0.1);
+  width: 64px;
+  height: 64px;
+  background: rgba(var(--success-rgb), 0.1);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   font-size: 28px;
-  color: #15803d;
+  color: var(--success);
 }
 
-.success-section h2 {
-  font-size: 20px;
-  font-weight: 900;
-  color: #111;
-  margin: 0;
+.btn-primary-link {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 700;
+  transition: var(--trans-fast);
 }
 
-.success-section p {
-  font-size: 13px;
-  color: #666;
-  margin: 0;
+.btn-primary-link:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
-@media (max-width: 640px) {
-  .forgot-password {
-    gap: 18px;
-  }
+.mb-lg { margin-bottom: var(--space-lg); }
 
-  .title {
-    font-size: 20px;
-  }
-
-  .form {
-    gap: 14px;
-  }
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>

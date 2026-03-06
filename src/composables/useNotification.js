@@ -1,61 +1,38 @@
-import { ref } from 'vue'
+import { reactive } from 'vue'
 
-const notifications = ref([])
-let notificationId = 0
+const state = reactive({
+  notifications: []
+})
 
-export function useNotification() {
-  function notify(message, type = 'info', title = '', duration = 3000) {
-    const id = ++notificationId
-    const notification = {
-      id,
-      message,
-      type, // success, error, warning, info
-      title,
+export const useNotification = () => {
+  const add = (type, message, title = '') => {
+    const id = Date.now()
+    state.notifications.push({ id, type, message, title })
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      remove(id)
+    }, 5000)
+  }
+
+  const success = (message, title = 'Success') => add('success', message, title)
+  const error = (message, title = 'Error') => add('error', message, title)
+  const warning = (message, title = 'Warning') => add('warning', message, title)
+  const info = (message, title = 'Info') => add('info', message, title)
+
+  const remove = (id) => {
+    const index = state.notifications.findIndex(n => n.id === id)
+    if (index !== -1) {
+      state.notifications.splice(index, 1)
     }
-
-    notifications.value.push(notification)
-
-    if (duration > 0) {
-      setTimeout(() => {
-        notifications.value = notifications.value.filter(n => n.id !== id)
-      }, duration)
-    }
-
-    return id
-  }
-
-  function success(message, title = '') {
-    return notify(message, 'success', title)
-  }
-
-  function error(message, title = 'Xatolik') {
-    return notify(message, 'error', title)
-  }
-
-  function warning(message, title = '') {
-    return notify(message, 'warning', title)
-  }
-
-  function info(message, title = '') {
-    return notify(message, 'info', title)
-  }
-
-  function remove(id) {
-    notifications.value = notifications.value.filter(n => n.id !== id)
-  }
-
-  function clear() {
-    notifications.value = []
   }
 
   return {
-    notifications,
-    notify,
+    notifications: state.notifications,
     success,
     error,
     warning,
     info,
-    remove,
-    clear,
+    remove
   }
 }

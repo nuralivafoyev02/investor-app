@@ -9,67 +9,61 @@ const routes = [
         path: '',
         name: 'dashboard',
         component: () => import('../../modules/pages/DashboardView.vue'),
-        meta: { requiresAuth: true, title: 'Dashboard' },
+        meta: { requiresAuth: true, title: 'dashboard.title' },
       },
       {
         path: 'investors',
         name: 'investors',
         component: () => import('../../modules/pages/InvestorsListView.vue'),
-        meta: { requiresAuth: true, title: 'Investorlar' },
+        meta: { requiresAuth: true, title: 'investors.title' },
       },
       {
         path: 'projects',
         name: 'projects',
         component: () => import('../../modules/pages/ProjectsListView.vue'),
-        meta: { requiresAuth: true, title: 'Loyihalar' },
+        meta: { requiresAuth: true, title: 'projects.title' },
       },
       {
         path: 'cashboxes',
         name: 'cashboxes',
         component: () => import('../../modules/pages/CashboxesListView.vue'),
-        meta: { requiresAuth: true, title: 'Kassalar' },
+        meta: { requiresAuth: true, title: 'finance.vaults.title' },
       },
       {
         path: 'expenses',
         name: 'expenses',
         component: () => import('../../modules/pages/ExpensesListView.vue'),
-        meta: { requiresAuth: true, title: 'Xarajatlar' },
+        meta: { requiresAuth: true, title: 'finance.expenses.title' },
       },
       {
         path: 'reports',
         name: 'reports',
         component: () => import('../../modules/pages/ReportsView.vue'),
-        meta: { requiresAuth: true, title: 'Hisobotlar' },
+        meta: { requiresAuth: true, title: 'reports.title' },
       },
       {
         path: 'settings',
         name: 'settings',
         component: () => import('../../modules/settings/SettingsView.vue'),
-        meta: { requiresAuth: true, title: 'Sozlamalar' },
+        meta: { requiresAuth: true, title: 'settings.title' },
       },
       {
         path: 'click-uzbekistan',
         name: 'click-uzbekistan',
-        component: () => import('../../modules/integraions/ClickUzbekistan.vue'),
+        component: () => import('../../modules/integrations/ClickUzbekistan.vue'),
         meta: { requiresAuth: true, title: 'Click Uzbekistan' },
       },
       {
         path: 'uyqur',
         name: 'uyqur',
-        component: () => import('../../modules/integraions/UyqurApp.vue'),
+        component: () => import('../../modules/integrations/UyqurApp.vue'),
         meta: { requiresAuth: true, title: 'Uyqur App' },
       },
       {
         path: 'monetary',
         name: 'monetary',
-        component: () => import('../../modules/integraions/Monetary.vue'),
+        component: () => import('../../modules/integrations/Monetary.vue'),
         meta: { requiresAuth: true, title: 'Monetary' },
-      },
-      {
-        path: 'settings',
-        name: 'settings',
-        component: () => import('../../modules/settings/SettingsView.vue'),
-        meta: { requiresAuth: true, title: 'Sozlamalar' },
       },
     ],
   },
@@ -117,12 +111,6 @@ router.beforeEach((to) => {
 
   if (to.meta.guestOnly && isLoggedIn) {
     return { name: 'dashboard' }
-  }
-
-  if (to.meta.title) {
-    document.title = `${to.meta.title} | Investor App`
-  } else {
-    document.title = 'Investor App'
   }
 })
 

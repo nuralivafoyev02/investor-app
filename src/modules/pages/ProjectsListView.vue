@@ -1,502 +1,531 @@
 <template>
-  <div class="page-container">
+  <div class="projects-page">
     <div class="page-header">
-      <div>
-        <h1 class="page-title">Loyihalar</h1>
-        <p class="page-subtitle">{{ projects.length }} ta loyiha</p>
+      <div class="header-content">
+        <h1 class="page-title">{{ t('projects.title') }}</h1>
+        <p class="page-subtitle">{{ t('projects.subtitle') }}</p>
       </div>
-      <button @click="openAddModal" class="btn-primary">
-        <span>+</span> Yangi loyiha
-      </button>
+      <BaseButton variant="primary" size="md" @click="openAddModal">
+        {{ t('projects.add') }}
+      </BaseButton>
     </div>
 
-    <div class="filters">
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Qidiruv..."
-        class="search-input"
-      />
-      <select v-model="filterStatus" class="filter-select">
-        <option value="">Barcha statuslar</option>
-        <option value="active">Faol</option>
-        <option value="completed">Yakunlangan</option>
-        <option value="paused">To'xtatilgan</option>
-      </select>
-    </div>
-
-    <div v-if="filteredProjects.length === 0" class="empty-state">
-      <p>Loyihalar topilmadi</p>
-    </div>
-
-    <div v-else class="projects-list">
-      <div v-for="project in filteredProjects" :key="project.id" class="project-item">
-        <div class="project-left">
-          <h3 class="project-name">{{ project.name }}</h3>
-          <p class="project-desc">{{ project.description }}</p>
-          <div class="project-meta">
-            <span class="meta-item">👤 {{ project.leader }}</span>
-            <span class="meta-item">💰 {{ project.budget }} so'm</span>
-            <span class="meta-item">📅 {{ project.startDate }}</span>
-          </div>
-        </div>
-        <div class="project-right">
-          <div class="progress-bar">
-            <div class="progress-fill" :style="{ width: project.progress + '%' }"></div>
-          </div>
-          <div class="progress-text">{{ project.progress }}% yakunlandi</div>
-          <span class="badge" :class="project.status">
-            {{ getStatusLabel(project.status) }}
-          </span>
-          <button @click="deleteProject(project.id)" class="btn-small btn-danger">O'chirish</button>
-        </div>
+    <div class="filters-bar glass">
+      <div class="search-box">
+        <BaseInput
+          v-model="searchQuery"
+          :placeholder="t('projects.searchPlaceholder')"
+          class="search-input"
+        >
+          <template #prefix>
+            <IconSearch class="icon-sm" />
+          </template>
+        </BaseInput>
+      </div>
+      <div class="filter-actions">
+        <BaseSelect
+          v-model="filterStatus"
+          :options="[
+            { label: t('investors.allStatuses'), value: '' },
+            { label: t('projects.status.inProgress'), value: 'In Progress' },
+            { label: t('projects.status.planning'), value: 'Planning' },
+            { label: t('projects.status.completed'), value: 'Completed' }
+          ]"
+          class="status-select"
+        />
       </div>
     </div>
 
-    <!-- Modal -->
-    <div v-if="showModal" @click.self="closeModal" class="modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2>{{ editingId ? 'Loyihani tahrirlash' : 'Yangi loyiha qo\'shish' }}</h2>
-          <button @click="closeModal" class="btn-close">×</button>
+    <div v-if="projectStore.loading" class="projects-grid">
+      <BaseCard v-for="i in 6" :key="`skeleton-${i}`" class="project-card">
+        <template #header>
+          <div class="card-header-inner">
+            <BaseSkeleton width="60%" height="20px" />
+            <BaseSkeleton width="50px" height="20px" type="button" />
+          </div>
+        </template>
+        <div class="project-content">
+          <BaseSkeleton width="100%" height="40px" class="mb-4" />
+          <div class="project-stats">
+            <BaseSkeleton v-for="s in 2" :key="s" width="40%" height="30px" />
+          </div>
+          <BaseSkeleton width="100%" height="20px" />
         </div>
-        <form @submit.prevent="saveProject" class="form">
-          <div class="form-group">
-            <label>Loyiha nomi</label>
-            <input v-model="formData.name" type="text" required />
-          </div>
-          <div class="form-group">
-            <label>Tavsif</label>
-            <textarea v-model="formData.description" rows="3"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Rahbari</label>
-            <input v-model="formData.leader" type="text" required />
-          </div>
-          <div class="form-group">
-            <label>Byudjet (so'm)</label>
-            <input v-model.number="formData.budget" type="number" required />
-          </div>
-          <div class="form-group">
-            <label>Boshlanish sanasi</label>
-            <input v-model="formData.startDate" type="date" required />
-          </div>
-          <div class="form-group">
-            <label>Progress (%)</label>
-            <input v-model.number="formData.progress" type="range" min="0" max="100" />
-            <div class="slider-value">{{ formData.progress }}%</div>
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <select v-model="formData.status">
-              <option value="active">Faol</option>
-              <option value="completed">Yakunlangan</option>
-              <option value="paused">To'xtatilgan</option>
-            </select>
-          </div>
-          <div class="modal-actions">
-            <button type="button" @click="closeModal" class="btn-secondary">Bekor qilish</button>
-            <button type="submit" class="btn-primary">Saqlash</button>
-          </div>
-        </form>
-      </div>
+      </BaseCard>
     </div>
+
+    <div v-else-if="filteredProjects.length === 0" class="empty-state">
+      <div class="empty-icon">📁</div>
+      <p>{{ t('projects.empty') }}</p>
+      <BaseButton variant="secondary" size="sm" @click="searchQuery = ''; filterStatus = ''">{{ t('projects.clearFilters') }}</BaseButton>
+    </div>
+
+    <div v-else class="projects-grid">
+      <BaseCard
+        v-for="project in filteredProjects"
+        :key="project.id"
+        class="project-card"
+        :interactive="true"
+        @click="openEditModal(project)"
+      >
+        <template #header>
+          <div class="card-header-inner">
+            <h3 class="project-name">{{ project.name }}</h3>
+            <BaseBadge :type="getStatusType(project.status)">{{ project.status }}</BaseBadge>
+          </div>
+        </template>
+        
+        <div class="project-content">
+          <p class="project-description">{{ project.description }}</p>
+          
+          <div class="project-stats">
+            <div class="stat-item">
+              <span class="stat-label">{{ t('projects.stats.budget') }}</span>
+              <span class="stat-value">{{ formatCurrency(project.budget) }}</span>
+            </div>
+            <div class="stat-item text-right">
+              <span class="stat-label">{{ t('projects.stats.deadline') }}</span>
+              <span class="stat-value">{{ project.deadline }}</span>
+            </div>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress-info">
+              <span class="progress-label">{{ t('projects.stats.completion') }}</span>
+              <span class="progress-percent">{{ project.progress }}%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div 
+                class="progress-bar-fill" 
+                :style="{ width: `${project.progress}%` }"
+                :class="getStatusType(project.status)"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <template #footer>
+          <div class="card-footer-inner">
+            <span class="footer-hint">{{ t('projects.footerHint') }}</span>
+            <div class="mini-actions" @click.stop>
+              <button class="mini-btn delete" @click="confirmDelete(project.id)">
+                <IconTrash />
+              </button>
+            </div>
+          </div>
+        </template>
+      </BaseCard>
+    </div>
+
+    <!-- Project Modal -->
+    <DashboardModal
+      v-if="showModal"
+      :title="editingId ? t('projects.modal.edit') : t('projects.modal.add')"
+      @close="closeModal"
+    >
+      <form @submit.prevent="handleSave" class="project-form">
+        <div class="form-grid">
+          <BaseInput
+            v-model="formData.name"
+            :label="t('projects.form.name')"
+            placeholder="E.g. Smart City Infrastructure"
+            required
+            class="span-2"
+          />
+          <BaseTextarea
+            v-model="formData.description"
+            :label="t('projects.form.description')"
+            placeholder="Detailed description of the project goals..."
+            rows="3"
+            class="span-2"
+          />
+          <BaseInput
+            v-model.number="formData.budget"
+            :label="t('projects.form.budget')"
+            type="number"
+            placeholder="0"
+            required
+          />
+          <BaseInput
+            v-model="formData.deadline"
+            :label="t('projects.form.deadline')"
+            type="date"
+            required
+          />
+          <BaseSelect
+            v-model="formData.status"
+            :label="t('projects.form.status')"
+            :options="[
+              { label: t('projects.status.planning'), value: 'Planning' },
+              { label: t('projects.status.inProgress'), value: 'In Progress' },
+              { label: t('projects.status.completed'), value: 'Completed' }
+            ]"
+          />
+          <BaseInput
+            v-model.number="formData.progress"
+            :label="t('projects.form.progress')"
+            type="number"
+            min="0"
+            max="100"
+          />
+        </div>
+        
+        <div class="modal-footer">
+          <BaseButton variant="ghost" @click="closeModal">{{ t('common.cancel') }}</BaseButton>
+          <BaseButton type="submit" variant="primary" :loading="isSaving">
+            {{ editingId ? t('projects.modal.update') : t('projects.modal.create') }}
+          </BaseButton>
+        </div>
+      </form>
+    </DashboardModal>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useProjectStore } from '@/stores/projects'
+import { useNotification } from '@/composables/useNotification'
+import { useI18n } from '@/composables/useI18n'
+const { t } = useI18n()
 
-const projects = ref([
-  { id: '1', name: 'E-commerce Platform', description: 'Onlayn sotish platformasi', leader: 'Alisher', budget: 50000000, startDate: '2024-01-15', progress: 75, status: 'active' },
-  { id: '2', name: 'Mobile App', description: 'Mobil ilova', leader: 'Fatima', budget: 30000000, startDate: '2024-02-01', progress: 45, status: 'active' },
-  { id: '3', name: 'Web Design', description: 'Veb-sayt dizayni', leader: 'Ahmad', budget: 15000000, startDate: '2023-12-01', progress: 100, status: 'completed' },
-])
+// Components
+import BaseButton from '@/ui/base/BaseButton.vue'
+import BaseInput from '@/ui/base/BaseInput.vue'
+import BaseSelect from '@/ui/base/BaseSelect.vue'
+import BaseCard from '@/ui/base/BaseCard.vue'
+import BaseBadge from '@/ui/base/BaseBadge.vue'
+import BaseTextarea from '@/ui/base/BaseTextarea.vue'
+import DashboardModal from '@/features/dashboard/DashboardModal.vue'
 
-const showModal = ref(false)
-const editingId = ref(null)
+// Icons
+import IconSearch from '@/ui/icons/IconSearch.vue'
+import IconTrash from '@/ui/icons/IconTrash.vue'
+
+const projectStore = useProjectStore()
+const { success, error } = useNotification()
+
 const searchQuery = ref('')
 const filterStatus = ref('')
+const showModal = ref(false)
+const editingId = ref(null)
+const isSaving = ref(false)
 
 const formData = reactive({
   name: '',
   description: '',
-  leader: '',
-  budget: 0,
-  startDate: '',
+  status: 'In Progress',
   progress: 0,
-  status: 'active',
+  budget: 0,
+  deadline: '',
 })
 
 const filteredProjects = computed(() => {
-  return projects.value.filter(project => {
-    const matchSearch = project.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                       project.description.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchStatus = filterStatus.value === '' || project.status === filterStatus.value
-    return matchSearch && matchStatus
+  return projectStore.projects.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                         p.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesStatus = !filterStatus.value || p.status === filterStatus.value
+    return matchesSearch && matchesStatus
   })
 })
 
-function getStatusLabel(status) {
-  const labels = {
-    active: 'Faol',
-    completed: 'Yakunlangan',
-    paused: 'To\'xtatilgan'
+const getStatusType = (status) => {
+  switch (status) {
+    case 'Completed': return 'success'
+    case 'In Progress': return 'info'
+    case 'Planning': return 'warning'
+    default: return 'default'
   }
-  return labels[status] || status
 }
 
-function openAddModal() {
+const formatCurrency = (val) => {
+  return new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', maximumFractionDigits: 0 }).format(val)
+}
+
+const openAddModal = () => {
   editingId.value = null
-  formData.name = ''
-  formData.description = ''
-  formData.leader = ''
-  formData.budget = 0
-  formData.startDate = ''
-  formData.progress = 0
-  formData.status = 'active'
+  Object.assign(formData, { name: '', description: '', status: 'Planning', progress: 0, budget: 0, deadline: '' })
   showModal.value = true
 }
 
-function closeModal() {
+const openEditModal = (project) => {
+  editingId.value = project.id
+  Object.assign(formData, { ...project })
+  showModal.value = true
+}
+
+const closeModal = () => {
   showModal.value = false
 }
 
-function saveProject() {
-  if (editingId.value) {
-    const index = projects.value.findIndex(p => p.id === editingId.value)
-    if (index !== -1) {
-      projects.value[index] = { ...formData, id: editingId.value }
+const handleSave = async () => {
+  isSaving.value = true
+  try {
+    if (editingId.value) {
+      await projectStore.updateProject(editingId.value, { ...formData })
+      success('Project updated successfully')
+    } else {
+      await projectStore.addProject({ ...formData })
+      success('New project initialized')
     }
-  } else {
-    projects.value.push({
-      id: 'proj_' + Date.now(),
-      ...formData,
-    })
+    closeModal()
+  } catch (err) {
+    // Error notification handled by service
+  } finally {
+    isSaving.value = false
   }
-  closeModal()
 }
 
-function deleteProject(id) {
-  projects.value = projects.value.filter(p => p.id !== id)
+onMounted(() => {
+  projectStore.fetchProjects()
+})
+
+const confirmDelete = (id) => {
+  if (confirm(t('projects.modal.deleteConfirm'))) {
+    projectStore.deleteProject(id)
+    success('Project permanently deleted')
+  }
 }
 </script>
 
 <style scoped>
-.page-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.projects-page {
+  padding: var(--space-xl);
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
+  margin-bottom: var(--space-xl);
 }
 
 .page-title {
-  font-size: 28px;
-  font-weight: 900;
-  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
 }
 
 .page-subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: #666;
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
-.btn-primary {
-  padding: 10px 16px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
+.filters-bar {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
 }
 
-.btn-primary:hover {
-  background: #333;
-}
-
-.filters {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.search-input,
-.filter-select {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-}
-
-.search-input {
+.search-box {
   flex: 1;
+}
+
+.status-select {
+  width: 200px;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--space-xl);
+}
+
+.project-card :deep(.card-body) {
+  padding-top: var(--space-md);
+}
+
+.card-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.project-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.project-description {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-lg);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 44px;
+}
+
+.project-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--bg-main);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.progress-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.progress-percent {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.progress-bar-bg {
+  height: 8px;
+  background: var(--bg-main);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.progress-bar-fill.success { background: var(--success); }
+.progress-bar-fill.info { background: var(--primary); }
+.progress-bar-fill.warning { background: var(--warning); }
+
+.card-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.footer-hint {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.mini-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--trans-fast);
+  padding: 4px;
+}
+
+.mini-btn:hover {
+  color: var(--danger);
+}
+
+.project-form {
+  padding: var(--space-lg);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px 20px;
-  color: #999;
-}
-
-.projects-list {
+  padding: 80px 20px;
+  color: var(--text-muted);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.project-item {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background: #fff;
-  transition: all 0.2s;
+  gap: var(--space-md);
 }
 
-.project-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.empty-icon {
+  font-size: 48px;
+  opacity: 0.2;
 }
 
-.project-left {
-  flex: 1;
-}
-
-.project-name {
-  margin: 0 0 6px;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.project-desc {
-  margin: 0 0 10px;
-  font-size: 12px;
-  color: #666;
-}
-
-.project-meta {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.meta-item {
-  font-size: 12px;
-  color: #666;
-  font-weight: 600;
-}
-
-.project-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  min-width: 150px;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 6px;
-  background: #eee;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: #22c55e;
-  transition: width 0.3s;
-}
-
-.progress-text {
-  font-size: 12px;
-  color: #666;
-  font-weight: 600;
-}
-
-.badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  background: #f0f0f0;
-}
-
-.badge.active {
-  background: #dbeafe;
-  color: #0c4a6e;
-}
-
-.badge.completed {
-  background: #d1f5e0;
-  color: #15803d;
-}
-
-.badge.paused {
-  background: #ffe5e5;
-  color: #b42318;
-}
-
-.btn-small {
-  padding: 6px 12px;
-  font-size: 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  background: #f5f5f5;
-}
-
-.btn-danger {
-  color: #b42318;
-}
-
-.btn-danger:hover {
-  background: #ffe5e5 !important;
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: grid;
-  place-items: center;
-  z-index: 999;
-}
-
-.modal-card {
-  background: #fff;
-  border-radius: 12px;
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-}
-
-.form {
-  padding: 20px;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 700;
-  font-size: 12px;
-  color: #333;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #111;
-}
-
-.slider-value {
-  margin-top: 6px;
-  text-align: center;
-  font-weight: 700;
-  color: #666;
-  font-size: 12px;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  padding-top: 10px;
-}
-
-.btn-secondary {
-  padding: 10px 16px;
-  background: #f5f5f5;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
+@media (max-width: 1024px) {
+  .projects-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
-    gap: 16px;
+    align-items: flex-start;
+    gap: var(--space-lg);
   }
-
-  .filters {
+  
+  .filters-bar {
     flex-direction: column;
   }
-
-  .filter-select {
+  
+  .status-select {
     width: 100%;
   }
-
-  .project-item {
-    flex-direction: column;
-    align-items: flex-start;
+  
+  .projects-grid {
+    grid-template-columns: 1fr;
   }
-
-  .project-right {
-    width: 100%;
-    align-items: flex-start;
+  
+  .form-grid {
+    grid-template-columns: 1fr;
   }
-
-  .progress-bar {
-    width: 100%;
-  }
-
-  .modal-card {
-    width: 95%;
+  
+  .span-2 {
+    grid-column: span 1;
   }
 }
 </style>

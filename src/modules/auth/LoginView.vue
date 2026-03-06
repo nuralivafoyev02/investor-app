@@ -1,63 +1,75 @@
 <template>
-  <div class="login-form">
-    <div class="logo-section">
-      <h1 class="app-name">📊 Investor App</h1>
-      <p class="subtitle">Investitsiya boshqarish tizimi</p>
+  <div class="login-view">
+    <div class="login-header">
+      <div class="logo-box">📊</div>
+      <h1 class="login-title">{{ t('auth.login.title') }}</h1>
+      <p class="login-subtitle">{{ t('auth.login.subtitle') }}</p>
     </div>
 
-    <form @submit.prevent="handleLogin" class="form">
-      <Input
+    <form @submit.prevent="handleLogin" class="login-form">
+      <BaseInput
         v-model="formData.email"
         type="email"
-        label="Email manzili"
+        :label="t('auth.login.email')"
         placeholder="admin@example.com"
         :error="errors.email"
         @blur="validateEmail"
+        required
       />
 
-      <Input
+      <BaseInput
         v-model="formData.password"
         type="password"
-        label="Parol"
+        :label="t('auth.login.password')"
         placeholder="••••••••"
         :error="errors.password"
         @blur="validatePassword"
+        required
       />
 
-      <label class="checkbox-label">
-        <input v-model="formData.rememberMe" type="checkbox" />
-        <span>Meni eslab qol</span>
-      </label>
+      <div class="form-options">
+        <label class="checkbox-container">
+          <input type="checkbox" v-model="formData.rememberMe" />
+          <span class="checkmark"></span>
+          <span class="label-text">{{ t('auth.login.remember') }}</span>
+        </label>
+        <RouterLink to="/auth/forgot-password" class="forgot-link">{{ t('auth.login.forgot') }}</RouterLink>
+      </div>
 
-      <Button
+      <BaseButton
         type="submit"
         variant="primary"
-        size="md"
-        :disabled="isLoading"
+        size="lg"
+        class="login-btn"
         :loading="isLoading"
-        class="w-full"
       >
-        {{ isLoading ? 'Kirish...' : 'Kirish' }}
-      </Button>
+        {{ t('auth.login.submit') }}
+      </BaseButton>
 
-      <Alert v-if="errors.general" type="error">
-        {{ errors.general }}
-      </Alert>
+      <transition name="fade">
+        <BaseAlert v-if="errors.general" type="error">
+          {{ errors.general }}
+        </BaseAlert>
+      </transition>
     </form>
 
-    <div class="footer-links">
-      <RouterLink to="/auth/forgot-password" class="link">Parolni esdan chiqdingizmi?</RouterLink>
-      <p class="demo-hint">Demo: email: admin@example.com, parol: password</p>
+    <div class="login-footer">
+      <p class="demo-account">
+        <strong>{{ t('auth.login.demo') }}:</strong> admin@example.com / password
+      </p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter, RouterLink } from 'vue-router'
 import { reactive, ref } from 'vue'
-import Button from '@/components/Button.vue'
-import Input from '@/components/Input.vue'
-import Alert from '@/components/Alert.vue'
+import { useRouter, RouterLink } from 'vue-router'
+import { useI18n } from '@/composables/useI18n'
+import BaseButton from '@/ui/base/BaseButton.vue'
+import BaseInput from '@/ui/base/BaseInput.vue'
+import BaseAlert from '@/ui/base/BaseAlert.vue'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const isLoading = ref(false)
@@ -77,12 +89,12 @@ const errors = reactive({
 function validateEmail() {
   const email = formData.email.trim()
   if (!email) {
-    errors.email = 'Email manzili talab qilinadi'
+    errors.email = t('auth.login.error.emailReq')
     return false
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {
-    errors.email = 'Email manzili noto\'g\'ri'
+    errors.email = t('auth.login.error.emailInvalid')
     return false
   }
   errors.email = ''
@@ -91,11 +103,11 @@ function validateEmail() {
 
 function validatePassword() {
   if (!formData.password) {
-    errors.password = 'Parol talab qilinadi'
+    errors.password = t('auth.login.error.passReq')
     return false
   }
   if (formData.password.length < 6) {
-    errors.password = 'Parol kamida 6 ta belgidan iborat bo\'lishi kerak'
+    errors.password = t('auth.login.error.passMin')
     return false
   }
   errors.password = ''
@@ -105,226 +117,164 @@ function validatePassword() {
 async function handleLogin() {
   errors.general = ''
 
-  if (!validateEmail() | !validatePassword()) {
-    return
-  }
+  if (!validateEmail() | !validatePassword()) return
 
   isLoading.value = true
 
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 800))
+  // Simulate secure authentication
+  await new Promise(resolve => setTimeout(resolve, 1200))
 
-  // Demo credentials
   if (formData.email === 'admin@example.com' && formData.password === 'password') {
-    const user = {
-      id: '1',
-      email: formData.email,
-      name: 'Admin User',
-    }
-    localStorage.setItem('token', 'demo-token-' + Date.now())
+    const user = { id: '1', email: formData.email, name: 'Portfolio Manager' }
+    localStorage.setItem('token', 'session_' + Math.random().toString(36).slice(2))
     localStorage.setItem('user', JSON.stringify(user))
-    if (formData.rememberMe) {
-      localStorage.setItem('rememberMe', 'true')
-    }
+    
     isLoading.value = false
     router.push('/')
   } else {
-    errors.general = 'Email yoki parol noto\'g\'ri'
+    errors.general = t('auth.login.error.denied')
     isLoading.value = false
   }
 }
 </script>
 
 <style scoped>
-.login-form {
+.login-view {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-xl);
 }
 
-.logo-section {
+.login-header {
   text-align: center;
-  margin-bottom: 12px;
 }
 
-.app-name {
+.logo-box {
+  width: 64px;
+  height: 64px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  display: grid;
+  place-items: center;
+  font-size: 32px;
+  margin: 0 auto 16px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.login-title {
   font-size: 28px;
-  font-weight: 900;
-  margin: 0 0 8px;
-  color: #111;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
 }
 
-.subtitle {
+.login-subtitle {
   font-size: 14px;
-  color: #666;
-  margin: 0;
-  font-weight: 500;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
-  font-weight: 700;
-  font-size: 13px;
-  color: #333;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.form-input {
-  padding: 12px 14px;
-  border: 1.5px solid #ddd;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #111;
-  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
-}
-
-.form-input.error {
-  border-color: #b42318;
-}
-
-.error-message {
-  font-size: 12px;
-  color: #b42318;
+  color: var(--text-muted);
   font-weight: 600;
 }
 
-.checkbox-label {
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.checkbox-container {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 500;
-  font-size: 13px;
+  gap: 10px;
   cursor: pointer;
   user-select: none;
 }
 
-.checkbox-label input[type='checkbox'] {
-  width: 16px;
-  height: 16px;
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
   cursor: pointer;
 }
 
-.btn-primary {
-  padding: 12px 16px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
+.checkmark {
+  height: 18px;
+  width: 18px;
+  border-radius: 4px;
+  border: 2px solid var(--border-light);
+  transition: var(--trans-fast);
+  position: relative;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: #333;
-  transform: translateY(-1px);
+.checkbox-container:hover input ~ .checkmark {
+  border-color: var(--primary);
 }
 
-.btn-primary:active:not(:disabled) {
-  transform: translateY(0);
+.checkbox-container input:checked ~ .checkmark {
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
-.spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.alert {
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-weight: 600;
+.label-text {
   font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
 }
 
-.alert-error {
-  background: rgba(180, 35, 24, 0.1);
-  color: #b42318;
-  border: 1px solid rgba(180, 35, 24, 0.2);
+.forgot-link {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--trans-fast);
 }
 
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+.forgot-link:hover {
+  opacity: 0.7;
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.login-footer {
   text-align: center;
 }
 
-.link {
-  color: #111;
-  font-weight: 700;
-  text-decoration: none;
-  font-size: 13px;
-  border-bottom: 2px solid #111;
-  transition: all 0.2s ease;
-}
-
-.link:hover {
-  color: #666;
-  border-bottom-color: #666;
-}
-
-.demo-hint {
+.demo-account {
   font-size: 12px;
-  color: #999;
-  margin: 0;
-  font-weight: 500;
+  color: var(--text-muted);
+  font-weight: 600;
+  opacity: 0.7;
 }
 
-@media (max-width: 640px) {
-  .login-form {
-    gap: 20px;
-  }
-
-  .app-name {
-    font-size: 24px;
-  }
-
-  .form {
-    gap: 16px;
-  }
-
-  .btn-primary {
-    padding: 14px 16px;
-  }
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>

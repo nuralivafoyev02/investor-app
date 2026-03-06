@@ -1,320 +1,313 @@
 <template>
-  <div class="page-container">
+  <div class="reports-page">
     <div class="page-header">
-      <h1 class="page-title">Hisobotlar</h1>
-    </div>
-
-    <div class="date-filter">
-      <input v-model="startDate" type="month" class="filter-input" />
-      <span class="dash">—</span>
-      <input v-model="endDate" type="month" class="filter-input" />
-      <button @click="generateReport" class="btn-primary">Hisobot yaratish</button>
-    </div>
-
-    <div v-if="reportData" class="report-container">
-      <div class="report-summary">
-        <h2>Xulosa</h2>
-        <div class="summary-grid">
-          <div class="summary-card">
-            <span class="label">Jami kirim</span>
-            <span class="value income">{{ reportData.totalIncome.toLocaleString('uz-UZ') }} so'm</span>
-          </div>
-          <div class="summary-card">
-            <span class="label">Jami xarajat</span>
-            <span class="value expense">{{ reportData.totalExpense.toLocaleString('uz-UZ') }} so'm</span>
-          </div>
-          <div class="summary-card">
-            <span class="label">Sof daromad</span>
-            <span class="value" :class="{ income: reportData.netIncome >= 0, expense: reportData.netIncome < 0 }">
-              {{ reportData.netIncome.toLocaleString('uz-UZ') }} so'm
-            </span>
-          </div>
-        </div>
+      <div class="header-content">
+        <h1 class="page-title">{{ t('reports.title') }}</h1>
+        <p class="page-subtitle">{{ t('reports.subtitle') }}</p>
       </div>
+      <div class="header-actions">
+        <BaseButton variant="secondary" size="md" @click="printReport">
+          {{ t('reports.export') }}
+        </BaseButton>
+        <BaseButton variant="primary" size="md" @click="generateReport">
+          {{ t('reports.regenerate') }}
+        </BaseButton>
+      </div>
+    </div>
 
-      <div class="report-details">
-        <h2>Xarajatlar bo'yicha tahlil</h2>
-        <div class="details-list">
-          <div v-for="item in reportData.expenseBreakdown" :key="item.category" class="detail-item">
-            <span class="category">{{ item.category }}</span>
-            <div class="bar-container">
-              <div class="bar" :style="{ width: item.percentage + '%' }"></div>
+    <div class="report-controls glass">
+      <div class="control-item">
+        <label>{{ t('reports.start') }}</label>
+        <BaseInput v-model="startDate" type="month" />
+      </div>
+      <div class="control-item">
+        <label>{{ t('reports.end') }}</label>
+        <BaseInput v-model="endDate" type="month" />
+      </div>
+    </div>
+
+    <div v-if="reportData" class="report-body">
+      <div class="analytics-grid">
+        <BaseCard :title="t('reports.summary')" class="summary-card">
+          <div class="finance-overview">
+            <div class="overview-item">
+              <span class="ov-label">{{ t('reports.revenue') }}</span>
+              <span class="ov-value success">{{ formatCurrency(reportData.totalIncome) }}</span>
             </div>
-            <span class="amount">{{ item.amount.toLocaleString('uz-UZ') }} so'm</span>
+            <div class="overview-item">
+              <span class="ov-label">{{ t('reports.expenses') }}</span>
+              <span class="ov-value danger">{{ formatCurrency(reportData.totalExpense) }}</span>
+            </div>
+            <div class="overview-divider"></div>
+            <div class="overview-item total">
+              <span class="ov-label">{{ t('reports.net') }}</span>
+              <span class="ov-value" :class="reportData.netIncome >= 0 ? 'success' : 'danger'">
+                {{ formatCurrency(reportData.netIncome) }}
+              </span>
+            </div>
           </div>
-        </div>
+        </BaseCard>
+
+        <BaseCard :title="t('reports.distribution')" class="chart-card">
+          <div class="distribution-list">
+            <div v-for="item in reportData.expenseBreakdown" :key="item.category" class="dist-item">
+              <div class="dist-info">
+                <span class="dist-cat">{{ item.category }}</span>
+                <span class="dist-amount">{{ formatCurrency(item.amount) }}</span>
+              </div>
+              <div class="dist-bar-wrap">
+                <div class="dist-bar-fill" :style="{ width: `${item.percentage}%` }"></div>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
       </div>
 
-      <div class="actions">
-        <button @click="downloadReport" class="btn-action">⬇️ Yuklab olish</button>
-        <button @click="printReport" class="btn-action">🖨️ Chop etish</button>
+      <div class="detailed-logs">
+        <h2 class="section-title">{{ t('reports.breakdown') }}</h2>
+        <BaseTable :columns="logColumns" :data="reportData.expenseBreakdown">
+          <template #cell-amount="{ val }">
+            <span class="table-amount">{{ formatCurrency(val) }}</span>
+          </template>
+          <template #cell-percentage="{ val }">
+            <BaseBadge type="info">{{ val }}%</BaseBadge>
+          </template>
+        </BaseTable>
       </div>
     </div>
 
     <div v-else class="empty-state">
-      <p>Hisobot yaratish uchun sana tanlang</p>
+      <div class="empty-illustration">📈</div>
+      <h3>{{ t('reports.noReport') }}</h3>
+      <p>{{ t('reports.noReportSubtitle') }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
+import { useI18n } from '@/composables/useI18n'
+
+// Components
+import BaseButton from '@/ui/base/BaseButton.vue'
+import BaseInput from '@/ui/base/BaseInput.vue'
+import BaseTable from '@/ui/base/BaseTable.vue'
+import BaseCard from '@/ui/base/BaseCard.vue'
+import BaseBadge from '@/ui/base/BaseBadge.vue'
 
 const startDate = ref(new Date().toISOString().slice(0, 7))
 const endDate = ref(new Date().toISOString().slice(0, 7))
 const reportData = ref(null)
 
-function generateReport() {
-  // Dummy data
+const { t } = useI18n()
+
+const logColumns = [
+  { key: 'category', label: t('reports.department'), width: '40%' },
+  { key: 'amount', label: t('reports.total'), width: '30%' },
+  { key: 'percentage', label: t('reports.allocation'), width: '30%' },
+]
+
+const formatCurrency = (val) => {
+  return new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', maximumFractionDigits: 0 }).format(val)
+}
+
+const generateReport = async () => {
+  // Simulate heavy computation
+  reportData.value = null
+  await new Promise(r => setTimeout(r, 800))
+  
   reportData.value = {
-    totalIncome: 5000000,
-    totalExpense: 2300000,
-    netIncome: 2700000,
+    totalIncome: 125000000,
+    totalExpense: 48200000,
+    netIncome: 76800000,
     expenseBreakdown: [
-      { category: 'Ish haqi', amount: 1000000, percentage: 43 },
-      { category: 'Kommunal xizmat', amount: 400000, percentage: 17 },
-      { category: 'Transport', amount: 500000, percentage: 22 },
-      { category: 'Boshqa xarajat', amount: 400000, percentage: 18 },
+      { category: 'Human Capital', amount: 25000000, percentage: 52 },
+      { category: 'Infrastructure & Cloud', amount: 8500000, percentage: 18 },
+      { category: 'Marketing & Growth', amount: 12000000, percentage: 25 },
+      { category: 'Miscellaneous', amount: 2700000, percentage: 5 },
     ]
   }
 }
 
-function downloadReport() {
-  if (!reportData.value) return
-  const data = JSON.stringify(reportData.value, null, 2)
-  const blob = new Blob([data], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `hisobot-${startDate.value}.json`
-  a.click()
-}
-
-function printReport() {
+const printReport = () => {
   window.print()
 }
+
+// Initial generation
+generateReport()
 </script>
 
 <style scoped>
-.page-container {
-  max-width: 1000px;
-  margin: 0 auto;
+.reports-page {
+  padding: var(--space-xl);
 }
 
 .page-header {
-  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--space-md);
 }
 
 .page-title {
-  font-size: 28px;
-  font-weight: 900;
-  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
-.date-filter {
+.page-subtitle {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.report-controls {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: var(--space-xl);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-xl);
 }
 
-.filter-input {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 13px;
-  font-family: inherit;
-}
-
-.dash {
-  color: #999;
-  font-weight: 700;
-}
-
-.btn-primary {
-  padding: 10px 16px;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background: #333;
-}
-
-.report-container {
+.control-item {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 8px;
 }
 
-.report-summary {
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 12px;
-  border: 1px solid #eee;
-}
-
-.report-summary h2 {
-  margin: 0 0 16px;
-  font-size: 16px;
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.summary-card {
-  padding: 14px;
-  background: #fff;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.summary-card .label {
+.control-item label {
   font-size: 12px;
-  color: #666;
-  font-weight: 600;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
 }
 
-.summary-card .value {
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xxl);
+}
+
+.finance-overview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.overview-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ov-label {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.ov-value {
   font-size: 18px;
-  font-weight: 900;
-  color: #111;
+  font-weight: 800;
 }
 
-.value.income {
-  color: #22c55e;
+.overview-divider {
+  height: 1px;
+  background: var(--border-light);
 }
 
-.value.expense {
-  color: #ef4444;
-}
-
-.report-details {
-  padding: 20px;
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-}
-
-.report-details h2 {
-  margin: 0 0 16px;
+.overview-item.total .ov-label {
+  color: var(--text-main);
   font-size: 16px;
 }
 
-.details-list {
+.overview-item.total .ov-value {
+  font-size: 24px;
+  padding: 8px 16px;
+  background: var(--bg-main);
+  border-radius: var(--radius-md);
+}
+
+.distribution-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-lg);
 }
 
-.detail-item {
+.dist-item {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.category {
-  flex: 0 0 140px;
-  font-weight: 600;
-  font-size: 13px;
-  color: #333;
+.dist-info {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 14px;
 }
 
-.bar-container {
-  flex: 1;
-  height: 24px;
-  background: #f0f0f0;
-  border-radius: 4px;
+.dist-cat { color: var(--text-main); }
+.dist-amount { color: var(--text-muted); }
+
+.dist-bar-wrap {
+  height: 8px;
+  background: var(--bg-main);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
-.bar {
+.dist-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-  transition: width 0.3s ease;
+  background: var(--primary);
+  border-radius: var(--radius-full);
 }
 
-.detail-item .amount {
-  flex: 0 0 140px;
-  text-align: right;
-  font-weight: 700;
-  font-size: 12px;
-  color: #666;
+.section-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: var(--space-lg);
 }
 
-.actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.btn-action {
-  padding: 12px 20px;
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.btn-action:hover {
-  background: #eee;
+.table-amount {
+  font-weight: 800;
 }
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
-  color: #999;
+  padding: 100px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.empty-illustration {
+  font-size: 64px;
+  opacity: 0.2;
 }
 
 @media print {
-  .date-filter,
-  .actions {
+  .header-actions, .report-controls, .empty-state {
     display: none;
   }
 }
 
-@media (max-width: 640px) {
-  .date-filter {
-    flex-direction: column;
-  }
-
-  .filter-input {
-    width: 100%;
-  }
-
-  .summary-grid {
+@media (max-width: 1024px) {
+  .analytics-grid {
     grid-template-columns: 1fr;
   }
+}
 
-  .detail-item {
+@media (max-width: 768px) {
+  .page-header {
     flex-direction: column;
-  }
-
-  .category,
-  .detail-item .amount {
-    flex: 1;
-    width: 100%;
-    text-align: left;
-  }
-
-  .actions {
-    flex-direction: column;
-  }
-
-  .btn-action {
-    width: 100%;
+    align-items: flex-start;
+    gap: var(--space-lg);
   }
 }
 </style>
